@@ -1,0 +1,59 @@
+{
+  "metadata": {
+    "version": "0.0.1-plantilla",
+    "fecha_actualizacion": "2026-10-25",
+    "origen_x_y_m": null,
+    "notes": "PLANTILLA. Los elementos marcados como EJEMPLO no son datos reales del campus; sirven solo para validar el schema. Todo nodo/arista/punto real nuevo debe seguir esta misma estructura, con status='pendiente' para cualquier campo no verificado."
+  },
+  "nodos": [
+    {
+      "id": "EJEMPLO-G-P1-A01",
+      "nombre": "EJEMPLO - Aula 01, piso 1, bloque G",
+      "tipo": "aula",
+      "bloque": "G",
+      "piso": 1,
+      "lat": null,
+      "lon": null,
+      "x_m": null,
+      "y_m": null,
+      "techado": null,
+      "riesgo_caida": null,
+      "capacidad_estimada_personas": null,
+      "source": "EJEMPLO - dato ficticio de plantilla, no proviene de campo ni de documento",
+      "confidence": "supuesto",
+      "status": "pendiente",
+      "notes": "Nodo de ejemplo unicamente para validar el schema. Reemplazar o eliminar antes de cargar datos reales."
+    }
+  ],
+  "aristas": [
+    {
+      "id": "EJEMPLO-ARISTA-001",
+      "desde": "EJEMPLO-G-P1-A01",
+      "hasta": "EJEMPLO-G-P1-A01",
+      "distancia_m": null,
+      "tipo": "plano",
+      "techado": null,
+      "ancho_m": null,
+      "bloqueable": null,
+      "source": "EJEMPLO - dato ficticio de plantilla, no proviene de campo ni de documento",
+      "confidence": "supuesto",
+      "status": "pendiente",
+      "notes": "Arista de ejemplo (auto-referencia solo para fines de schema). Reemplazar por aristas reales entre nodos distintos."
+    }
+  ],
+  "puntos_encuentro": [
+    {
+      "id": "EJEMPLO-PE-01",
+      "nombre_o_codigo_en_senaletica": null,
+      "lat": null,
+      "lon": null,
+      "area_aprox_m2": null,
+      "abierto_sin_edificaciones_cerca": null,
+      "capacidad_estimada_personas": null,
+      "source": "EJEMPLO - dato ficticio de plantilla, no proviene de campo ni de documento",
+      "confidence": "supuesto",
+      "status": "pendiente",
+      "notes": "Punto de encuentro de ejemplo. El campus Matriz tiene 14 puntos de encuentro reales segun la Guia de simulacros (USIN-GS-v1-2019-013, pag. 3), pero su ubicacion no esta documentada y debe levantarse en campo."
+    }
+  ]
+}

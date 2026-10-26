@@ -1,0 +1,84 @@
+{
+  "descripcion": "Parametros del algoritmo ACO (Optimizacion por Colonia de Hormigas), variante MAX-MIN. Afinados en Fase 2B con una malla de 27 combinaciones (beta en {1,2,3}, rho en {0.1,0.3,0.5}, n_hormigas en {20,30,50}) sobre los 10 origenes representativos, 10 corridas cada una (2700 corridas totales). Las 27 combinaciones lograron 100% de exito y 0.00% de brecha frente a Dijkstra una vez aplicadas las correcciones de Fase 2B (poda de callejones, retroceso, heuristica guiada); se eligio la mas rapida como criterio de desempate. Tabla completa en docs/decisiones_fase2.md. Ningun numero del algoritmo debe escribirse en el codigo: src/aco.py y scripts/smoke_test.py deben leerlos siempre de aqui.",
+  "fecha_actualizacion": "2026-10-25",
+  "parametros": {
+    "n_hormigas": {
+      "value": 20,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Numero de hormigas por iteracion. Afinado en Fase 2B: con la poda de callejones, el retroceso y la heuristica guiada, las 27 combinaciones de la malla lograron 100% de exito y 0% de brecha; se eligio 20 (el valor mas bajo probado) por ser el mas rapido entre los empates (ver docs/decisiones_fase2.md)."
+    },
+    "n_iteraciones": {
+      "value": 100,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Numero maximo de iteraciones del algoritmo. Valor por defecto; se afinara en Fase 3."
+    },
+    "alfa": {
+      "value": 1.0,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Peso de la feromona (tau^alfa) en la probabilidad de transicion. Valor por defecto estandar en ACO."
+    },
+    "beta": {
+      "value": 1.0,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Peso de la heuristica (eta^beta, eta=1/(costo+h(j))) en la probabilidad de transicion. Afinado en Fase 2B: beta=1.0 fue parte de la combinacion mas rapida entre las 27 que lograron 100% de exito (ver docs/decisiones_fase2.md). El valor original (3.0) sobre-enfatizaba las aristas locales baratas y era la causa raiz del fallo de ACO antes de las correcciones."
+    },
+    "rho": {
+      "value": 0.5,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Tasa de evaporacion de feromona por iteracion (tau = (1-rho)*tau). Afinado en Fase 2B: rho=0.5 fue parte de la combinacion mas rapida entre las 27 que lograron 100% de exito (ver docs/decisiones_fase2.md)."
+    },
+    "Q": {
+      "value": 1.0,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Constante de deposito de feromona (delta_tau = Q / costo_camino). Valor por defecto."
+    },
+    "tau_inicial": {
+      "value": 1.0,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Valor inicial de feromona en todas las aristas (cuando no hay warm start)."
+    },
+    "tau_min": {
+      "value": 0.01,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Cota inferior de feromona (variante MAX-MIN), evita que una arista quede con probabilidad practicamente nula para siempre."
+    },
+    "tau_max": {
+      "value": 10.0,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Cota superior de feromona (variante MAX-MIN), evita estancamiento prematuro en una sola ruta."
+    },
+    "paciencia_estancamiento": {
+      "value": 25,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Numero de iteraciones consecutivas sin mejora del mejor costo global tras las cuales se detiene el algoritmo antes de llegar a n_iteraciones."
+    },
+    "semilla": {
+      "value": 42,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Semilla del generador aleatorio (random.Random) para reproducibilidad. Se puede sobreescribir por ejecucion (p. ej. en pruebas de warm start con varias semillas)."
+    },
+    "intervalo_snapshot_feromona": {
+      "value": 10,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Parametro agregado en Fase 2, no listado explicitamente en la tarea pero necesario para cumplir 'copias de la matriz de feromonas en iteraciones seleccionadas (para animar luego)'. Cada cuantas iteraciones se guarda una copia completa de la matriz de feromonas (ademas de la primera y la ultima)."
+    },
+    "max_pasos_factor": {
+      "value": 4,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Parametro pedido en Fase 2B: limite de pasos por hormiga = max_pasos_factor * numero de nodos de la vista podada del grafo, para evitar que el retroceso (backtracking) se alargue indefinidamente. Valor por defecto pedido explicitamente en la tarea (4)."
+    }
+  }
+}

@@ -1,0 +1,255 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "campus_graph.schema.json",
+  "title": "Grafo de evacuacion - bloques G y H, ESPE Matriz",
+  "description": "Esquema de datos para la Fase 0 del proyecto de evacuacion con ACO/Dijkstra. Ningun dato desconocido debe inventarse: debe guardarse como null y marcarse con status 'pendiente'.",
+  "type": "object",
+  "required": ["metadata", "nodos", "aristas", "puntos_encuentro"],
+  "additionalProperties": false,
+  "definitions": {
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "verificado_en_campo",
+        "medido_en_maps",
+        "documento_oficial",
+        "blog_no_oficial",
+        "supuesto"
+      ],
+      "description": "Nivel de confiabilidad del dato segun su origen."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["completo", "pendiente", "provisional"],
+      "description": "Indica si el dato ya fue recolectado/validado (completo), sigue pendiente de recoleccion (pendiente), o es un valor supuesto usado temporalmente para poder construir el grafo (provisional, desde Fase 1)."
+    },
+    "coordenada_lat": {
+      "type": ["number", "null"],
+      "minimum": -90,
+      "maximum": 90
+    },
+    "coordenada_lon": {
+      "type": ["number", "null"],
+      "minimum": -180,
+      "maximum": 180
+    },
+    "nodo": {
+      "type": "object",
+      "required": [
+        "id",
+        "nombre",
+        "tipo",
+        "bloque",
+        "piso",
+        "lat",
+        "lon",
+        "x_m",
+        "y_m",
+        "techado",
+        "riesgo_caida",
+        "capacidad_estimada_personas",
+        "source",
+        "confidence",
+        "status",
+        "notes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identificador unico del nodo, p. ej. 'G-P1-A01'."
+        },
+        "nombre": {
+          "type": ["string", "null"]
+        },
+        "tipo": {
+          "type": "string",
+          "enum": [
+            "aula",
+            "pasillo",
+            "gradas",
+            "salida",
+            "via_exterior",
+            "interseccion",
+            "punto_encuentro"
+          ]
+        },
+        "bloque": {
+          "type": "string",
+          "enum": ["G", "H", "exterior"]
+        },
+        "piso": {
+          "type": ["integer", "null"],
+          "description": "Numero de piso. null si no aplica (p. ej. via_exterior) o si es desconocido (status=pendiente)."
+        },
+        "lat": { "$ref": "#/definitions/coordenada_lat" },
+        "lon": { "$ref": "#/definitions/coordenada_lon" },
+        "x_m": {
+          "type": ["number", "null"],
+          "description": "Coordenada en metros respecto a un origen local definido para el proyecto (por definir)."
+        },
+        "y_m": {
+          "type": ["number", "null"]
+        },
+        "techado": {
+          "type": ["boolean", "null"]
+        },
+        "riesgo_caida": {
+          "type": ["boolean", "null"],
+          "description": "true si existen cerca arboles, postes, cables o vidrios que puedan caer."
+        },
+        "capacidad_estimada_personas": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "source": {
+          "type": "string",
+          "description": "Texto libre que identifica de donde viene el dato (p. ej. 'Ficha de campo bloque G, piso 1')."
+        },
+        "confidence": { "$ref": "#/definitions/confidence" },
+        "status": { "$ref": "#/definitions/status" },
+        "notes": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "arista": {
+      "type": "object",
+      "required": [
+        "id",
+        "desde",
+        "hasta",
+        "distancia_m",
+        "tipo",
+        "techado",
+        "ancho_m",
+        "bloqueable",
+        "source",
+        "confidence",
+        "status",
+        "notes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "desde": {
+          "type": "string",
+          "description": "id de nodo origen."
+        },
+        "hasta": {
+          "type": "string",
+          "description": "id de nodo destino."
+        },
+        "distancia_m": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "tipo": {
+          "type": "string",
+          "enum": ["plano", "gradas", "rampa", "puerta"]
+        },
+        "techado": {
+          "type": ["boolean", "null"]
+        },
+        "ancho_m": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "bloqueable": {
+          "type": ["boolean", "null"],
+          "description": "Campo previsto para fases futuras (p. ej. simulacion de bloqueos). Opcional en el sentido de que puede quedar pendiente."
+        },
+        "source": {
+          "type": "string"
+        },
+        "confidence": { "$ref": "#/definitions/confidence" },
+        "status": { "$ref": "#/definitions/status" },
+        "notes": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "punto_encuentro": {
+      "type": "object",
+      "required": [
+        "id",
+        "nombre_o_codigo_en_senaletica",
+        "lat",
+        "lon",
+        "area_aprox_m2",
+        "abierto_sin_edificaciones_cerca",
+        "capacidad_estimada_personas",
+        "source",
+        "confidence",
+        "status",
+        "notes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "nombre_o_codigo_en_senaletica": {
+          "type": ["string", "null"],
+          "description": "Texto exacto tal como aparece en el letrero fisico del punto de encuentro."
+        },
+        "lat": { "$ref": "#/definitions/coordenada_lat" },
+        "lon": { "$ref": "#/definitions/coordenada_lon" },
+        "area_aprox_m2": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "abierto_sin_edificaciones_cerca": {
+          "type": ["boolean", "null"]
+        },
+        "capacidad_estimada_personas": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Campo previsto para fases futuras."
+        },
+        "source": {
+          "type": "string"
+        },
+        "confidence": { "$ref": "#/definitions/confidence" },
+        "status": { "$ref": "#/definitions/status" },
+        "notes": {
+          "type": ["string", "null"]
+        }
+      }
+    }
+  },
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["version", "fecha_actualizacion", "origen_x_y_m", "notes"],
+      "additionalProperties": false,
+      "properties": {
+        "version": { "type": "string" },
+        "fecha_actualizacion": { "type": "string", "format": "date" },
+        "origen_x_y_m": {
+          "type": ["string", "null"],
+          "description": "Descripcion textual del punto de origen usado para x_m/y_m (por definir en campo)."
+        },
+        "notes": { "type": ["string", "null"] },
+        "provisional": {
+          "type": "boolean",
+          "description": "true mientras el archivo contenga datos con confidence 'supuesto' (Fase 1 en adelante). Campo opcional: la plantilla de Fase 0 no lo incluye."
+        }
+      }
+    },
+    "nodos": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/nodo" }
+    },
+    "aristas": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/arista" }
+    },
+    "puntos_encuentro": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/punto_encuentro" }
+    }
+  }
+}

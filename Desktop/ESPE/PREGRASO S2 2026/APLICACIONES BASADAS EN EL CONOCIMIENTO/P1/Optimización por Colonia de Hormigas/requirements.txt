@@ -1,0 +1,6 @@
+jsonschema
+pytest
+matplotlib
+streamlit
+pandas
+pillow

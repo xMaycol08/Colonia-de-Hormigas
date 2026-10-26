@@ -1,0 +1,161 @@
+{
+  "provisional": true,
+  "descripcion": "Parametros numericos del modelo del grafo de evacuacion de los bloques G y H. Ningun numero del modelo debe escribirse en el codigo: scripts/build_graph.py y scripts/plot_graph.py deben leerlos siempre de aqui.",
+  "fecha_actualizacion": "2026-10-25",
+  "parametros": {
+    "pisos_por_bloque": {
+      "value": 5,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Dato dado por el equipo: G y H tienen 5 pisos cada uno. Se asume que el piso 1 es la planta baja (nivel de las salidas). Verificar en campo el numero real de pisos y confirmar la numeracion de planta baja."
+    },
+    "escaleras_por_bloque": {
+      "value": 8,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Valor provisional dado por el equipo: unas escaleras dan al frente del edificio y otras hacia atras. Editable cuando la ficha de campo (data/campo/FICHA_TRABAJO_DE_CAMPO.md, seccion 3) reporte el numero y ubicacion real de escaleras por bloque."
+    },
+    "aulas_por_piso_por_bloque": {
+      "value": 6,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "No dado por el equipo; supuesto para poder generar nodos de aula por piso en esta fase provisional. Reemplazar con el conteo real de la ficha de campo (seccion 2, por piso)."
+    },
+    "longitud_paso_m": {
+      "value": 0.75,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Longitud de paso adulto promedio, tomada como referencia de la ficha de campo (seccion 9, 'Un paso adulto promedio ~0.75 m'). No usada aun en build_graph.py; queda disponible para cuando se registren distancias en pasos desde el campo."
+    },
+    "altura_piso_m": {
+      "value": 3.2,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Altura tipica de entrepiso en edificacion institucional ecuatoriana; no verificada para los bloques G/H especificamente. Verificar en campo o en planos si existen."
+    },
+    "factor_costo_gradas": {
+      "value": 2.0,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Factor que multiplica altura_piso_m para aproximar el costo de recorrer una escalera (una escalera cuesta mas que el mismo desnivel en plano, por pendiente y tiempo de giro). Pendiente: justificar con una referencia de ingenieria de evacuacion (p. ej. normas NFPA 130 / SFPE sobre velocidad de descenso en escaleras) en una fase futura."
+    },
+    "penalizacion_techado": {
+      "value": 1.5,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Factor multiplicador aplicado al costo de una arista techada, para reflejar que el Protocolo de actuacion ante sismos (docs/restricciones_oficiales.md, seccion 2) pide evacuar alejado de corredores cubiertos cuando sea posible. Valor arbitrario mientras no haya un criterio cuantitativo oficial."
+    },
+    "conexion_planta_baja_G_H_m": {
+      "value": 62,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Distancia aproximada entre Salida A (bloques C/H) y Salida B (bloques G/D), dada por el equipo como referencia de la distancia interior planta-baja que conecta H con G dentro del mismo edificio. La distancia haversine real entre Salida A y Salida B (calculada por build_graph.py) puede diferir porque esa distancia es exterior en linea recta, no el recorrido interior real; queda pendiente medir el recorrido interior en campo."
+    },
+    "velocidad_caminata_m_s": {
+      "value": 1.2,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Velocidad de caminata promedio en evacuacion, usada para estimar tiempos (distancia_m / velocidad_caminata_m_s) en fases futuras. No se usa aun en build_graph.py (Fase 1 solo construye distancias, no tiempos). Pendiente: justificar con una referencia (p. ej. SFPE Handbook of Fire Protection Engineering) en una fase futura."
+    },
+    "tramo_horizontal_gradas_m": {
+      "value": 4.0,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Parametro agregado en Fase 1, no listado en la tarea original pero necesario para implementar literalmente 'distancia_m de las gradas = altura_piso_m * factor_costo_gradas (mas el tramo horizontal)'. Representa el recorrido horizontal tipico de un tramo de escalera (descansos incluidos). Verificar con el recorrido real de las escaleras en la ficha de campo."
+    },
+    "distancia_pasillo_a_salida_m": {
+      "value": 5.0,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Parametro agregado en Fase 1 para la arista tipo 'puerta' entre el pasillo de planta baja y el nodo de Salida A/B. Representa el tramo desde el pasillo hasta la puerta de salida al exterior. Verificar en campo."
+    },
+    "distancia_aula_a_pasillo_m": {
+      "value": 3.0,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Parametro agregado en Fase 1 para la arista entre cada aula y el pasillo de su mismo piso. Verificar en campo (ficha de campo, seccion 2)."
+    },
+    "distancia_gradas_a_pasillo_m": {
+      "value": 2.0,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Parametro agregado en Fase 1 para la arista entre el nodo de gradas de un piso y el pasillo de ese mismo piso. Verificar en campo."
+    },
+    "ancho_pasillo_m": {
+      "value": 2.0,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Ancho tipico de pasillo institucional, usado en el campo ancho_m de las aristas tipo 'plano' interiores. Verificar en campo (ficha de campo, seccion 6)."
+    },
+    "ancho_gradas_m": {
+      "value": 1.2,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Ancho tipico de escalera institucional, usado en el campo ancho_m de las aristas tipo 'gradas'. Verificar en campo (ficha de campo, seccion 3)."
+    },
+    "ancho_puerta_salida_m": {
+      "value": 1.5,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Ancho tipico de puerta de salida de emergencia, usado en el campo ancho_m de las aristas tipo 'puerta' (pasillo planta baja -> Salida A/B, y conexion planta baja H<->G). Verificar en campo (ficha de campo, seccion 4)."
+    },
+    "espaciado_aula_m": {
+      "value": 4.0,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Parametro agregado en Fase 1, solo para visualizacion esquematica (scripts/plot_graph.py): separacion horizontal entre aulas/gradas en el layout de cada piso. No representa una medicion real; las coordenadas x_m/y_m interiores son esquematicas porque Google Maps no muestra interiores (ver docs/restricciones_oficiales.md)."
+    },
+    "tiempo_reaccion_s": {
+      "value": 60,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Tiempo entre la emision de la alerta y el inicio de la evacuacion (reaccion + ubicacion en espacio vital, antes de empezar a moverse hacia la salida), usado por src/metricas.py. El Protocolo de sismo (docs/restricciones_oficiales.md) pide 'tan pronto la tierra deje de moverse, abandone su espacio vital', pero no da un numero de segundos; este valor es un supuesto de ingenieria mientras no haya un tiempo medido en un simulacro real."
+    },
+    "tiempo_entre_personas_s": {
+      "value": 1.0,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Parametro agregado en Fase 2 para src/metricas.py: separacion temporal promedio entre dos personas consecutivas pasando por el mismo cuello de botella (puerta/escalera) de una ruta, usada para estimar el tiempo de la ULTIMA persona en llegar a partir de poblacion_por_origen (tiempo_ultima = tiempo_primera + (poblacion-1) * tiempo_entre_personas_s). Es un modelo de cola simplificado, no una medicion de capacidad real de flujo; pendiente de reemplazar con un modelo de flujo peatonal (p. ej. basado en ancho_m de la arista mas angosta de la ruta) en una fase futura."
+    },
+    "origenes_representativos": {
+      "value": [
+        {"id_nodo": "H-P1-AULA01", "bloque": "H", "piso": 1},
+        {"id_nodo": "H-P2-AULA01", "bloque": "H", "piso": 2},
+        {"id_nodo": "H-P3-AULA01", "bloque": "H", "piso": 3},
+        {"id_nodo": "H-P4-AULA01", "bloque": "H", "piso": 4},
+        {"id_nodo": "H-P5-AULA01", "bloque": "H", "piso": 5},
+        {"id_nodo": "G-P1-AULA01", "bloque": "G", "piso": 1},
+        {"id_nodo": "G-P2-AULA01", "bloque": "G", "piso": 2},
+        {"id_nodo": "G-P3-AULA01", "bloque": "G", "piso": 3},
+        {"id_nodo": "G-P4-AULA01", "bloque": "G", "piso": 4},
+        {"id_nodo": "G-P5-AULA01", "bloque": "G", "piso": 5}
+      ],
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "10 origenes representativos (una aula por piso de cada bloque), pedidos por la tarea de Fase 2. Se eligio siempre el aula 01 de cada piso como representativa del piso completo; es un supuesto de muestreo, no un conteo real de todas las aulas. Usado por src/metricas.py."
+    },
+    "factor_congestion_demo": {
+      "value": 3.0,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Parametro agregado en Fase 2B/3 solo para la app interactiva (app/app.py): factor multiplicativo de distancia_m usado por el escenario de demostracion 'Congestion en salida A'. No es una medicion real de congestion; es un valor ilustrativo para la pestana de simulacion."
+    },
+    "poblacion_por_origen": {
+      "value": {
+        "H-P1-AULA01": 25,
+        "H-P2-AULA01": 25,
+        "H-P3-AULA01": 25,
+        "H-P4-AULA01": 25,
+        "H-P5-AULA01": 25,
+        "G-P1-AULA01": 25,
+        "G-P2-AULA01": 25,
+        "G-P3-AULA01": 25,
+        "G-P4-AULA01": 25,
+        "G-P5-AULA01": 25
+      },
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Numero de personas asumido por origen representativo (capacidad tipica de aula), usado por src/metricas.py para estimar tiempos de primera y ultima persona. Valor unico provisional para las 10 aulas; reemplazar con capacidad_estimada_personas real por aula cuando se levante en campo (ver data/campus_graph.schema.json, campo capacidad_estimada_personas)."
+    }
+  }
+}
