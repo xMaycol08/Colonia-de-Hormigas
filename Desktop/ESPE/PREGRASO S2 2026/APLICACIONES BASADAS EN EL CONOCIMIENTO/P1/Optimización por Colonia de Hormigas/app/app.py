@@ -29,7 +29,6 @@ sys.path.insert(0, str(RAIZ_PROYECTO / "src"))
 from grafo import (  # noqa: E402
     Grafo,
     cargar_grafo,
-    cargar_json,
     cargar_configuracion,
     aplicar_congestion,
     CONFIG_MODELO_PATH,
@@ -43,10 +42,11 @@ from benchmark import ejecutar_benchmark, resumir_benchmark, barrido_sensibilida
 
 ESCENARIOS_DISPONIBLES = [
     "Normal",
-    "Escalera de H bloqueada",
+    "Gradas Norte bloqueadas",
+    "Gradas Sur bloqueadas",
     "Salida A bloqueada",
     "Salida B bloqueada",
-    "Congestion en salida A",
+    "Congestion en una salida",
 ]
 
 COLOR_ACO = "#1565c0"
@@ -64,21 +64,27 @@ def cargar_datos():
     grafo = cargar_grafo()
     config_modelo = cargar_configuracion(CONFIG_MODELO_PATH)
     config_aco_default = cargar_configuracion(CONFIG_ACO_PATH)
-    config_modelo_crudo = cargar_json(CONFIG_MODELO_PATH)
-    return grafo, config_modelo, config_aco_default, config_modelo_crudo
+    return grafo, config_modelo, config_aco_default
+
+
+ID_ARISTA_GRADAS_SUR_SALIDA_A = "GRADAS-SUR-PB-SALIDA-A"
+ID_ARISTA_GRADAS_NORTE_SALIDA_B = "GRADAS-NORTE-PB-SALIDA-B"
 
 
 def construir_escenario(nombre: str, grafo: Grafo, config_modelo: dict) -> Escenario:
     """Traduce el nombre de un escenario de la UI a aristas bloqueadas / congestion."""
-    if nombre == "Escalera de H bloqueada":
-        bloqueadas = frozenset(aid for aid in grafo.aristas_por_id if aid.startswith("H-GRADA01-P"))
+    if nombre == "Gradas Norte bloqueadas":
+        bloqueadas = frozenset(aid for aid in grafo.aristas_por_id if aid.startswith("GRADAS-NORTE-"))
+        return Escenario(nombre, bloqueadas, {})
+    if nombre == "Gradas Sur bloqueadas":
+        bloqueadas = frozenset(aid for aid in grafo.aristas_por_id if aid.startswith("GRADAS-SUR-"))
         return Escenario(nombre, bloqueadas, {})
     if nombre == "Salida A bloqueada":
-        return Escenario(nombre, frozenset({"H-PB-SALIDA"}), {})
+        return Escenario(nombre, frozenset({ID_ARISTA_GRADAS_SUR_SALIDA_A}), {})
     if nombre == "Salida B bloqueada":
-        return Escenario(nombre, frozenset({"G-PB-SALIDA"}), {})
-    if nombre == "Congestion en salida A":
-        return Escenario(nombre, frozenset(), {"H-PB-SALIDA": config_modelo["factor_congestion_demo"]})
+        return Escenario(nombre, frozenset({ID_ARISTA_GRADAS_NORTE_SALIDA_B}), {})
+    if nombre == "Congestion en una salida":
+        return Escenario(nombre, frozenset(), {ID_ARISTA_GRADAS_SUR_SALIDA_A: config_modelo["factor_congestion_demo"]})
     return Escenario("Normal", frozenset(), {})
 
 
@@ -88,11 +94,10 @@ def construir_escenario(nombre: str, grafo: Grafo, config_modelo: dict) -> Escen
 
 
 def opciones_vista(config_modelo: dict) -> list[str]:
-    pisos = int(config_modelo["pisos_por_bloque"])
+    niveles = config_modelo["niveles"]
     opciones = ["General"]
-    for bloque in ("H", "G"):
-        for piso in range(1, pisos + 1):
-            opciones.append(f"Bloque {bloque}, piso {piso}")
+    for nivel in niveles:
+        opciones.append(f"Nivel {nivel}")
     return opciones
 
 
@@ -100,11 +105,11 @@ def _nodos_y_aristas_para_vista(grafo: Grafo, vista: str):
     if vista == "General":
         nodos = list(grafo.nodos_por_id.values())
     else:
-        _, bloque, _, piso_str = vista.replace(",", "").split(" ")
-        piso = int(piso_str)
-        nodos = [n for n in grafo.nodos_por_id.values() if n["bloque"] == bloque and n["piso"] == piso]
-        if piso == 1:
-            nodos += [n for n in grafo.nodos_por_id.values() if n["tipo"] == "salida" and n["bloque"] == bloque]
+        nivel = vista.replace("Nivel ", "")
+        piso = 0 if nivel == "PB" else int(nivel)
+        nodos = [n for n in grafo.nodos_por_id.values() if n["bloque"] in ("H", "G", "compartido") and n["piso"] == piso]
+        if piso == 0:
+            nodos += [n for n in grafo.nodos_por_id.values() if n["tipo"] == "salida"]
     ids = {n["id"] for n in nodos}
     aristas = [a for a in grafo.aristas_por_id.values() if a["desde"] in ids and a["hasta"] in ids]
     return nodos, aristas
@@ -129,10 +134,6 @@ def dibujar_grafo(
     nodos, aristas = _nodos_y_aristas_para_vista(grafo, vista)
 
     fig, ax = plt.subplots(figsize=(8, 6.5))
-    ax.text(
-        0.5, 0.5, "DATOS PROVISIONALES", transform=ax.transAxes, fontsize=28, color="gray",
-        alpha=0.15, ha="center", va="center", rotation=25, zorder=0,
-    )
 
     tau_vals = [v for k, v in (tau or {}).items()]
     tau_min_v, tau_max_v = (min(tau_vals), max(tau_vals)) if tau_vals else (0.0, 1.0)
@@ -204,30 +205,6 @@ def figura_a_imagen(fig: plt.Figure) -> Image.Image:
 
 
 # --------------------------------------------------------------------------
-# Aviso de supuestos (comun a todas las pestanas)
-# --------------------------------------------------------------------------
-
-
-def mostrar_aviso_supuestos(config_modelo_crudo: dict) -> None:
-    if config_modelo_crudo.get("provisional"):
-        st.warning(
-            "⚠️ DATOS PROVISIONALES: varios valores de data/config_modelo.json siguen siendo "
-            "supuestos (no verificados en campo). Ver data/pendientes.md."
-        )
-    with st.expander("Ver tabla de supuestos (medido en Maps vs. hipotetico)"):
-        filas = [
-            {
-                "parametro": nombre,
-                "valor": str(info.get("value"))[:80],
-                "confidence": info.get("confidence"),
-                "comentario": info.get("comentario", "")[:160],
-            }
-            for nombre, info in config_modelo_crudo["parametros"].items()
-        ]
-        st.dataframe(pd.DataFrame(filas), hide_index=True, width="stretch")
-
-
-# --------------------------------------------------------------------------
 # App
 # --------------------------------------------------------------------------
 
@@ -236,15 +213,13 @@ def main() -> None:
     st.set_page_config(page_title="Evacuacion G/H - ESPE", layout="wide")
     st.title("Simulador de evacuacion - Bloques G y H (ESPE Matriz)")
 
-    grafo, config_modelo, config_aco_default, config_modelo_crudo = cargar_datos()
-    origenes_repr = [o["id_nodo"] for o in config_modelo["origenes_representativos"]]
-
-    mostrar_aviso_supuestos(config_modelo_crudo)
+    grafo, config_modelo, config_aco_default = cargar_datos()
+    origenes_todos = list(config_modelo["poblacion_por_origen"].keys())
 
     # ---------------- Barra lateral ----------------
     with st.sidebar:
         st.header("Controles")
-        origen = st.selectbox("Origen", origenes_repr, index=0)
+        origen = st.selectbox("Origen", origenes_todos, index=0)
         escenario_nombre = st.selectbox("Escenario", ESCENARIOS_DISPONIBLES, index=0)
 
         st.markdown("### Parametros de ACO")
@@ -275,7 +250,7 @@ def main() -> None:
         _pestana_comparacion(grafo_escenario, origen, escenario, config_modelo, config_aco_actual)
 
     with tab3:
-        _pestana_benchmark(grafo, origenes_repr, config_modelo, config_aco_actual)
+        _pestana_benchmark(grafo, origenes_todos, config_modelo, config_aco_actual)
 
     with tab4:
         _pestana_evacuacion_completa(grafo_escenario, escenario, config_modelo)
@@ -534,7 +509,7 @@ def _pestana_benchmark(grafo, origenes_repr, config_modelo, config_aco_actual) -
 
 
 def _pestana_evacuacion_completa(grafo, escenario, config_modelo) -> None:
-    st.subheader(f"Evacuacion completa (10 origenes) - escenario: {escenario.nombre}")
+    st.subheader(f"Evacuacion completa (42 origenes) - escenario: {escenario.nombre}")
 
     metricas_origenes = calcular_metricas_todos_los_origenes(grafo, config_modelo, escenario.aristas_bloqueadas)
 
@@ -592,7 +567,6 @@ def _pestana_evacuacion_completa(grafo, escenario, config_modelo) -> None:
 
     def _dibujar_posiciones(t: float) -> plt.Figure:
         fig, ax = plt.subplots(figsize=(8, 6.5))
-        ax.text(0.5, 0.5, "DATOS PROVISIONALES", transform=ax.transAxes, fontsize=28, color="gray", alpha=0.15, ha="center", va="center", rotation=25, zorder=0)
         for a in grafo.aristas_por_id.values():
             n1, n2 = grafo.nodos_por_id[a["desde"]], grafo.nodos_por_id[a["hasta"]]
             if n1["x_m"] is None or n2["x_m"] is None:

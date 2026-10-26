@@ -1,0 +1,40 @@
+{
+  "descripcion": "Calibracion pixel -> metros locales (x_m, y_m) -> lat/lon para data/maps/plano_base_GH_anotado.jpeg, usada por scripts/build_graph.py y scripts/plot_graph.py para superponer el grafo sobre el plano real (Tarea D.1, Fase 1-bis). Se usa la imagen ANOTADA (no la limpia) porque contiene las dos X de control y porque su propia marcacion del equipo sirve de referencia visual adicional; data/maps/plano_base_GH_limpio.png no se calibro por separado (tiene otro encuadre/zoom).",
+  "imagen": "data/maps/plano_base_GH_anotado.jpeg",
+  "imagen_ancho_px": 1600,
+  "imagen_alto_px": 782,
+  "supuesto_norte_arriba": true,
+  "metodo": "similaridad sin rotacion (norte=arriba, escala uniforme), calibrada con 2 puntos de control (las dos X verdes). x_m = (px - px_origen) / escala_px_por_m; y_m = -(py - py_origen) / escala_px_por_m; lon = lon_origen + x_m / (111320*cos(radians(lat_origen))); lat = lat_origen + y_m / 110574. origen = Salida A (mismo origen que data/campus_graph.json).",
+  "puntos_de_control": {
+    "salida_A": {
+      "pixel_x": 874.7,
+      "pixel_y": 477.2,
+      "lat": -0.313162,
+      "lon": -78.445291,
+      "fuente_pixel": "centroide de pixeles verde brillante detectados por color en la X sur (deteccion automatica, no a ojo); bbox (851,456)-(899,498)",
+      "nota": "Usado como origen local (x_m=0, y_m=0), igual que en data/campus_graph.json"
+    },
+    "salida_B": {
+      "pixel_x": 924.5,
+      "pixel_y": 51.4,
+      "lat": -0.312607,
+      "lon": -78.445237,
+      "fuente_pixel": "centroide de pixeles verde brillante detectados por color en la X norte (deteccion automatica, no a ojo); bbox (899,30)-(954,70)"
+    }
+  },
+  "distancia_real_control_m": 61.7,
+  "distancia_pixeles_control_px": 428.7,
+  "escala_px_por_m": 6.948,
+  "verificacion_con_barra_de_escala": {
+    "metodo": "Se recorto y amplio la zona de la barra '10 m' (esquina inferior derecha de la captura) y se midio SOLO el segmento horizontal continuo entre las dos marcas verticales (fila con la corrida de blanco mas larga), excluyendo el texto '10 m', que se detecto aparte como fragmentos cortos no contiguos.",
+    "primera_medicion_incorrecta_px": 94,
+    "primera_medicion_incluia": "texto '10 m' + barra (minimo a maximo de todo pixel blanco en la fila), por eso salio inflada",
+    "medicion_correcta_px": 71,
+    "medicion_correcta_rango_x": [102, 173],
+    "escala_desde_barra_px_por_m": 7.10,
+    "escala_desde_dos_puntos_px_por_m": 6.948,
+    "error_relativo_pct": 2.19,
+    "umbral_aceptacion_pct": 5.0,
+    "veredicto": "aceptado: error 2.19% < 5%. Se usa la calibracion por los dos puntos de control (dos X) como definitiva; no se deja ninguna advertencia de calibracion pendiente en el modelo."
+  }
+}

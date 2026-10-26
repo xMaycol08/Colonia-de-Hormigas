@@ -1,15 +1,15 @@
-"""Construye el grafo de evacuacion provisional de los bloques G y H (Fase 1).
+"""Construye el grafo de evacuacion (Fase 1-bis): complejo G/H con 2 secciones de gradas
+compartidas (norte, sur) y 2 salidas, segun la verdad de campo del equipo sobre
+data/maps/plano_base_GH_anotado.jpeg.
 
-Lee data/config_modelo.json (todos los numeros del modelo) y
-data/raw/maps_observations.json (coordenadas reales medidas en Maps en Fase 0/1),
+Lee data/config_modelo.json (todos los numeros del modelo), data/posiciones_plano.json
+(posiciones de pixel de los nodos 'hub' que se repiten en cada nivel) y
+data/calibracion_plano.json (transformacion pixel -> metros/lat-lon), mas
+data/raw/maps_observations.json (caminos exteriores y puntos de encuentro, Fase 0/1),
 y genera data/campus_graph.json siguiendo data/campus_graph.schema.json.
 
-No implementa ACO ni Dijkstra. Solo construye la estructura de datos del grafo,
-con todos los supuestos marcados como tales (confidence "supuesto", status
-"provisional") segun las reglas de la Fase 1.
-
-Uso:
-    python scripts/build_graph.py
+No implementa ACO ni Dijkstra. Solo construye la estructura del grafo, con todos
+los supuestos marcados como tales (confidence "supuesto", status "provisional").
 """
 
 from __future__ import annotations
@@ -26,17 +26,17 @@ sys.path.insert(0, str(RAIZ_PROYECTO / "scripts"))
 from validate_graph import cargar_json, distancia_haversine_m  # noqa: E402
 
 CONFIG_PATH = RAIZ_PROYECTO / "data" / "config_modelo.json"
+POSICIONES_PATH = RAIZ_PROYECTO / "data" / "posiciones_plano.json"
+CALIBRACION_PATH = RAIZ_PROYECTO / "data" / "calibracion_plano.json"
 OBSERVACIONES_PATH = RAIZ_PROYECTO / "data" / "raw" / "maps_observations.json"
 SALIDA_GRAFO_PATH = RAIZ_PROYECTO / "data" / "campus_graph.json"
 
-# Datos dados por el equipo (no son numeros "del modelo" en el sentido de
-# config_modelo.json: son coordenadas de campo, igual que las de
-# maps_observations.json, asi que se tratan igual: fijas aqui como las demas
-# coordenadas medidas, con su propio nivel de confianza).
+# Coordenadas dadas por el equipo (Fase 1), re-verificadas en Fase 1-bis como
+# las dos X de la captura anotada (ver data/calibracion_plano.json).
 SALIDA_A = {"id": "SALIDA-A", "lat": -0.313162, "lon": -78.445291, "bloque": "H"}
 SALIDA_B = {"id": "SALIDA-B", "lat": -0.312607, "lon": -78.445237, "bloque": "G"}
 
-DISTANCIA_MAXIMA_SALIDA_BLOQUE_M = 40.0
+DISTANCIA_MAXIMA_SALIDA_GRADAS_M = 40.0
 
 
 def cargar_configuracion() -> dict[str, Any]:
@@ -51,6 +51,15 @@ def proyectar_xy(lat: float, lon: float, lat0: float, lon0: float) -> tuple[floa
     metros_por_grado_lon = 111320.0 * math.cos(math.radians(lat0))
     x_m = (lon - lon0) * metros_por_grado_lon
     y_m = (lat - lat0) * metros_por_grado_lat
+    return round(x_m, 2), round(y_m, 2)
+
+
+def pixel_a_xy(px: float, py: float, calibracion: dict[str, Any]) -> tuple[float, float]:
+    """Convierte un pixel del plano calibrado a metros locales (x_m, y_m), origen Salida A."""
+    control_a = calibracion["puntos_de_control"]["salida_A"]
+    escala = calibracion["escala_px_por_m"]
+    x_m = (px - control_a["pixel_x"]) / escala
+    y_m = -(py - control_a["pixel_y"]) / escala
     return round(x_m, 2), round(y_m, 2)
 
 
@@ -124,16 +133,18 @@ def arista(
     }
 
 
+NOTA_INTERIOR = (
+    "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con "
+    "verificacion de campo (ver data/pendientes.md)."
+)
+SOURCE_PLANO = "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)"
+SOURCE_CONFIG = "data/config_modelo.json (supuesto del equipo, Fase 1-bis)"
+
+
 def generar_nodos_exteriores(
     observaciones: list[dict[str, Any]], lat0: float, lon0: float
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
-    """Genera los nodos exteriores: Salida A, Salida B, caminos de Maps y puntos de encuentro.
-
-    Devuelve (nodos, puntos_encuentro_detalle). Los puntos de encuentro se
-    agregan tanto a 'nodos' (tipo punto_encuentro, para la logica de caminos
-    del grafo) como a una lista aparte con los campos extra del schema
-    'puntos_encuentro' (area_aprox_m2, etc.).
-    """
+    """Genera los nodos exteriores: Salida A, Salida B, caminos de Maps y puntos de encuentro."""
     nodos: list[dict[str, Any]] = []
 
     for salida in (SALIDA_A, SALIDA_B):
@@ -144,7 +155,7 @@ def generar_nodos_exteriores(
                 nombre=f"{salida['id']} (bloques {'C y H' if salida['id'] == 'SALIDA-A' else 'G y D'})",
                 tipo="salida",
                 bloque=salida["bloque"],
-                piso=1,
+                piso=0,
                 lat=salida["lat"],
                 lon=salida["lon"],
                 x_m=x_m,
@@ -152,14 +163,13 @@ def generar_nodos_exteriores(
                 techado=False,
                 riesgo_caida=None,
                 capacidad_estimada_personas=None,
-                source="Coordenadas dadas por el equipo (Fase 1), leidas en Maps",
+                source="Coordenadas dadas por el equipo, confirmadas como las dos X de data/maps/plano_base_GH_anotado.jpeg",
                 confidence="medido_en_maps",
                 status="pendiente",
                 notes="indicado por el equipo, por verificar en campo",
             )
         )
 
-    ids_caminos_usados: list[str] = []
     for obs in observaciones:
         if obs["tipo"] != "camino":
             continue
@@ -184,7 +194,6 @@ def generar_nodos_exteriores(
                 notes=obs["notes"],
             )
         )
-        ids_caminos_usados.append(obs["id"])
 
     ids_puntos_encuentro = ["area_abierta_01", "area_abierta_02", "area_abierta_03"]
     nombres_pe = {
@@ -198,7 +207,7 @@ def generar_nodos_exteriores(
     for id_obs in ids_puntos_encuentro:
         obs = observaciones_por_id[id_obs]
         x_m, y_m = proyectar_xy(obs["lat"], obs["lon"], lat0, lon0)
-        id_pe = nombres_pe[id_obs].split(" ")[0]  # "PE-1", "PE-2", "PE-3"
+        id_pe = nombres_pe[id_obs].split(" ")[0]
         nodos.append(
             nodo(
                 id=id_pe,
@@ -218,10 +227,7 @@ def generar_nodos_exteriores(
                 status="provisional",
                 notes=(
                     "Punto de encuentro PROVISIONAL, no es un punto de encuentro oficial "
-                    "senalizado por la ESPE. Los 14 puntos de encuentro reales del campus "
-                    "Matriz (Guia de simulacros, USIN-GS-v1-2019-013) no tienen ubicacion "
-                    "conocida (ver docs/restricciones_oficiales.md). Reemplazar cuando se "
-                    "verifique la senaletica real en campo."
+                    "senalizado por la ESPE. Reemplazar cuando se verifique la senaletica real."
                 ),
             )
         )
@@ -237,11 +243,7 @@ def generar_nodos_exteriores(
                 "source": "data/raw/maps_observations.json",
                 "confidence": "supuesto",
                 "status": "provisional",
-                "notes": (
-                    "Provisional: area abierta candidata leida en Maps, sin confirmar que "
-                    "corresponda a senaletica oficial de punto de encuentro. "
-                    f"Observacion original: {id_obs}."
-                ),
+                "notes": f"Provisional: area abierta candidata. Observacion original: {id_obs}.",
             }
         )
 
@@ -251,14 +253,7 @@ def generar_nodos_exteriores(
 def construir_arbol_expansion_minima(
     nodos_exteriores: list[dict[str, Any]],
 ) -> list[tuple[str, str, float]]:
-    """Construye un arbol de expansion minima (Prim) sobre los nodos exteriores, usando haversine.
-
-    Esta es una conectividad APROXIMADA: conecta cada nodo exterior con su
-    vecino mas cercano hasta formar un unico componente conexo. No representa
-    el trazado real de las rutas peatonales (Fase 0 solo cubrio una porcion
-    pequena de los caminos del campus); es un supuesto de conectividad minima
-    para que el grafo sea navegable mientras se completa el levantamiento.
-    """
+    """Arbol de expansion minima (Prim) sobre los nodos exteriores, por distancia haversine."""
     if len(nodos_exteriores) < 2:
         return []
 
@@ -271,7 +266,7 @@ def construir_arbol_expansion_minima(
     nodos_por_id = {n["id"]: n for n in nodos_exteriores}
 
     while pendientes:
-        mejor = None  # (distancia, desde, hasta)
+        mejor = None
         for id_en_arbol in en_arbol:
             n1 = nodos_por_id[id_en_arbol]
             for id_candidato, n2 in pendientes.items():
@@ -304,279 +299,250 @@ def generar_aristas_exteriores(nodos_exteriores: list[dict[str, Any]]) -> list[d
                 source="Calculada: arbol de expansion minima por distancia haversine sobre data/raw/maps_observations.json",
                 confidence="supuesto",
                 status="provisional",
-                notes=(
-                    "Conectividad exterior aproximada (no es el trazado real del camino); "
-                    "la distancia_m si es haversine exacta entre los dos puntos medidos. "
-                    "Pendiente verificar el trazado real en campo."
-                ),
+                notes="Conectividad exterior aproximada (no es el trazado real del camino).",
             )
         )
     return aristas
 
 
-def generar_bloque_interior(
-    letra_bloque: str,
-    nodo_salida: dict[str, Any],
+def generar_complejo_interior(
     config: dict[str, Any],
+    posiciones: dict[str, Any],
+    calibracion: dict[str, Any],
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
-    """Genera los nodos y aristas interiores (aulas, pasillo, gradas) de un bloque, todos los pisos."""
+    """Genera los nodos/aristas del complejo interior: niveles, pasillos, gradas y aulas.
+
+    Un solo complejo compartido por G y H (no un bloque por separado): 2 secciones
+    de gradas (norte, sur) que llegan a todos los niveles, un nodo 'hub' de pasillo
+    central por nivel que conecta el pasillo de H, el de G y los dos accesos a
+    gradas, y 2 origenes en PB (oficinas CC en H, laboratorios de biotecnologia en G).
+    """
     nodos: list[dict[str, Any]] = []
     aristas: list[dict[str, Any]] = []
 
-    pisos = int(config["pisos_por_bloque"])
-    n_escaleras = int(config["escaleras_por_bloque"])
-    n_aulas = int(config["aulas_por_piso_por_bloque"])
-    espaciado = config["espaciado_aula_m"]
+    niveles: list[str] = config["niveles"]  # ["PB","1","2","3","4"]
+    aulas_por_piso = int(config["aulas_por_piso"])
     altura_piso = config["altura_piso_m"]
+    espaciado = config["espaciado_aula_m"]
 
-    base_x, base_y = nodo_salida["x_m"], nodo_salida["y_m"]
+    hub_px = posiciones["nodos_hub"]
+    hub_xy_m = {nombre: pixel_a_xy(info["pixel_x"], info["pixel_y"], calibracion) for nombre, info in hub_px.items()}
 
-    ids_pasillo_por_piso: dict[int, str] = {}
-    ids_gradas_por_piso: dict[int, list[str]] = {}
+    def id_pasillo(lado: str, nivel: str) -> str:
+        return f"PAS-{lado}-{nivel}"
 
-    notes_interior = (
-        "Dato interior PROVISIONAL (supuesto del equipo, Fase 1). Google Maps no "
-        "muestra interiores (ver docs/restricciones_oficiales.md); reemplazar con "
-        "la ficha de campo (data/campo/FICHA_TRABAJO_DE_CAMPO.md)."
-    )
-    source_interior = "data/config_modelo.json (supuesto de equipo, Fase 1)"
+    def id_gradas(seccion: str, nivel: str) -> str:
+        return f"GRADAS-{seccion}-{nivel}"
 
-    for piso in range(1, pisos + 1):
-        y_piso = base_y + (piso - 1) * altura_piso
+    ids_pasillo_central: dict[str, str] = {}
+    ids_gradas_norte: dict[str, str] = {}
+    ids_gradas_sur: dict[str, str] = {}
 
-        id_pasillo = f"{letra_bloque}-P{piso}-PAS"
-        ids_pasillo_por_piso[piso] = id_pasillo
+    for indice_nivel, nivel in enumerate(niveles):
+        piso_num = 0 if nivel == "PB" else int(nivel)
+        offset_visual_y = indice_nivel * altura_piso  # solo para separar niveles en la vista general
+
+        # --- nodos hub de este nivel (pasillo H, pasillo G, pasillo central, 2 accesos a gradas) ---
+        x_h, y_h = hub_xy_m["pasillo_H"]
+        x_g, y_g = hub_xy_m["pasillo_G"]
+        x_c, y_c = hub_xy_m["pasillo_central"]
+        x_gn, y_gn = hub_xy_m["gradas_norte_acceso"]
+        x_gs, y_gs = hub_xy_m["gradas_sur_acceso"]
+
+        id_pas_h = id_pasillo("H", nivel)
+        id_pas_g = id_pasillo("G", nivel)
+        id_pas_c = id_pasillo("CENTRAL", nivel)
+        id_gr_n = id_gradas("NORTE", nivel)
+        id_gr_s = id_gradas("SUR", nivel)
+        ids_pasillo_central[nivel] = id_pas_c
+        ids_gradas_norte[nivel] = id_gr_n
+        ids_gradas_sur[nivel] = id_gr_s
+
         nodos.append(
-            nodo(
-                id=id_pasillo,
-                nombre=f"Pasillo piso {piso}, bloque {letra_bloque}",
-                tipo="pasillo",
-                bloque=letra_bloque,
-                piso=piso,
-                lat=None,
-                lon=None,
-                x_m=base_x,
-                y_m=y_piso,
-                techado=True,
-                riesgo_caida=False,
-                capacidad_estimada_personas=None,
-                source=source_interior,
-                confidence="supuesto",
-                status="provisional",
-                notes=notes_interior,
-            )
+            nodo(id_pas_h, f"Pasillo H, nivel {nivel}", "pasillo", "H", piso_num, None, None,
+                 x_h, y_h + offset_visual_y, True, False, None, SOURCE_PLANO, "supuesto", "provisional", NOTA_INTERIOR)
+        )
+        nodos.append(
+            nodo(id_pas_g, f"Pasillo G, nivel {nivel}", "pasillo", "G", piso_num, None, None,
+                 x_g, y_g + offset_visual_y, True, False, None, SOURCE_PLANO, "supuesto", "provisional", NOTA_INTERIOR)
+        )
+        nodos.append(
+            nodo(id_pas_c, f"Pasillo central, nivel {nivel}", "pasillo", "compartido", piso_num, None, None,
+                 x_c, y_c + offset_visual_y, True, False, None, SOURCE_PLANO, "supuesto", "provisional", NOTA_INTERIOR)
+        )
+        nodos.append(
+            nodo(id_gr_n, f"Acceso gradas norte, nivel {nivel}", "gradas", "compartido", piso_num, None, None,
+                 x_gn, y_gn + offset_visual_y, True, False, None, SOURCE_PLANO, "supuesto", "provisional", NOTA_INTERIOR)
+        )
+        nodos.append(
+            nodo(id_gr_s, f"Acceso gradas sur, nivel {nivel}", "gradas", "compartido", piso_num, None, None,
+                 x_gs, y_gs + offset_visual_y, True, False, None, SOURCE_PLANO, "supuesto", "provisional", NOTA_INTERIOR)
         )
 
-        for i in range(1, n_aulas + 1):
-            id_aula = f"{letra_bloque}-P{piso}-AULA{i:02d}"
-            x_aula = base_x + (i - (n_aulas + 1) / 2) * espaciado
-            y_aula = y_piso + espaciado / 2
-            nodos.append(
-                nodo(
-                    id=id_aula,
-                    nombre=f"Aula {i:02d}, piso {piso}, bloque {letra_bloque}",
-                    tipo="aula",
-                    bloque=letra_bloque,
-                    piso=piso,
-                    lat=None,
-                    lon=None,
-                    x_m=round(x_aula, 2),
-                    y_m=round(y_aula, 2),
-                    techado=True,
-                    riesgo_caida=False,
-                    capacidad_estimada_personas=None,
-                    source=source_interior,
-                    confidence="supuesto",
-                    status="provisional",
-                    notes=notes_interior,
-                )
-            )
-            aristas.append(
-                arista(
-                    id=f"{letra_bloque}-P{piso}-A{id_aula[-2:]}-PAS",
-                    desde=id_aula,
-                    hasta=id_pasillo,
-                    distancia_m=config["distancia_aula_a_pasillo_m"],
-                    tipo="plano",
-                    techado=True,
-                    ancho_m=config["ancho_pasillo_m"],
-                    bloqueable=False,
-                    source=source_interior,
-                    confidence="supuesto",
-                    status="provisional",
-                    notes=notes_interior,
-                )
-            )
+        # --- aristas horizontales del nivel: distancias leidas de la imagen calibrada ---
+        def dist(p1: tuple[float, float], p2: tuple[float, float]) -> float:
+            return round(math.hypot(p1[0] - p2[0], p1[1] - p2[1]), 2)
 
-        ids_gradas_piso = []
-        for s in range(1, n_escaleras + 1):
-            id_gradas = f"{letra_bloque}-P{piso}-GRADA{s:02d}"
-            ids_gradas_piso.append(id_gradas)
-            x_gradas = base_x + (s - (n_escaleras + 1) / 2) * (espaciado * 0.6)
-            y_gradas = y_piso - espaciado / 2
-            nodos.append(
-                nodo(
-                    id=id_gradas,
-                    nombre=f"Gradas {s:02d}, piso {piso}, bloque {letra_bloque}",
-                    tipo="gradas",
-                    bloque=letra_bloque,
-                    piso=piso,
-                    lat=None,
-                    lon=None,
-                    x_m=round(x_gradas, 2),
-                    y_m=round(y_gradas, 2),
-                    techado=True,
-                    riesgo_caida=False,
-                    capacidad_estimada_personas=None,
-                    source=source_interior,
-                    confidence="supuesto",
-                    status="provisional",
-                    notes=notes_interior,
-                )
-            )
-            aristas.append(
-                arista(
-                    id=f"{letra_bloque}-P{piso}-G{s:02d}-PAS",
-                    desde=id_gradas,
-                    hasta=id_pasillo,
-                    distancia_m=config["distancia_gradas_a_pasillo_m"],
-                    tipo="plano",
-                    techado=True,
-                    ancho_m=config["ancho_pasillo_m"],
-                    bloqueable=False,
-                    source=source_interior,
-                    confidence="supuesto",
-                    status="provisional",
-                    notes=notes_interior,
-                )
-            )
-        ids_gradas_por_piso[piso] = ids_gradas_piso
+        aristas.append(
+            arista(f"PAS-H-CENTRAL-{nivel}", id_pas_h, id_pas_c, dist((x_h, y_h), (x_c, y_c)), "plano",
+                   True, config["ancho_pasillo_m"], True, SOURCE_PLANO, "supuesto", "provisional", NOTA_INTERIOR)
+        )
+        aristas.append(
+            arista(f"PAS-G-CENTRAL-{nivel}", id_pas_g, id_pas_c, dist((x_g, y_g), (x_c, y_c)), "plano",
+                   True, config["ancho_pasillo_m"], True, SOURCE_PLANO, "supuesto", "provisional", NOTA_INTERIOR)
+        )
+        aristas.append(
+            arista(f"PAS-CENTRAL-GRADAS-NORTE-{nivel}", id_pas_c, id_gr_n, dist((x_c, y_c), (x_gn, y_gn)), "plano",
+                   True, config["ancho_pasillo_m"], True, SOURCE_PLANO, "supuesto", "provisional", NOTA_INTERIOR)
+        )
+        aristas.append(
+            arista(f"PAS-CENTRAL-GRADAS-SUR-{nivel}", id_pas_c, id_gr_s, dist((x_c, y_c), (x_gs, y_gs)), "plano",
+                   True, config["ancho_pasillo_m"], True, SOURCE_PLANO, "supuesto", "provisional", NOTA_INTERIOR)
+        )
 
-    for piso in range(2, pisos + 1):
-        distancia_gradas = altura_piso * config["factor_costo_gradas"] + config["tramo_horizontal_gradas_m"]
-        for s in range(1, n_escaleras + 1):
-            id_arriba = ids_gradas_por_piso[piso][s - 1]
-            id_abajo = ids_gradas_por_piso[piso - 1][s - 1]
-            aristas.append(
-                arista(
-                    id=f"{letra_bloque}-GRADA{s:02d}-P{piso - 1}-P{piso}",
-                    desde=id_arriba,
-                    hasta=id_abajo,
-                    distancia_m=round(distancia_gradas, 2),
-                    tipo="gradas",
-                    techado=True,
-                    ancho_m=config["ancho_gradas_m"],
-                    bloqueable=True,
-                    source=source_interior,
-                    confidence="supuesto",
-                    status="provisional",
-                    notes=notes_interior,
-                )
-            )
+        # --- aulas de este nivel (PB no tiene aulas: ver origenes especiales abajo) ---
+        if nivel != "PB":
+            for lado, id_pas_lado, x_lado, y_lado in (("H", id_pas_h, x_h, y_h), ("G", id_pas_g, x_g, y_g)):
+                for n in range(1, aulas_por_piso + 1):
+                    id_aula = f"{lado}{piso_num}0{n}"
+                    x_aula = x_lado + (n - (aulas_por_piso + 1) / 2) * espaciado
+                    y_aula = y_lado + offset_visual_y + espaciado / 2
+                    nodos.append(
+                        nodo(id_aula, f"Aula {id_aula}", "aula", lado, piso_num, None, None,
+                             round(x_aula, 2), round(y_aula, 2), True, False, None,
+                             SOURCE_CONFIG, "supuesto", "provisional", NOTA_INTERIOR)
+                    )
+                    aristas.append(
+                        arista(f"{id_aula}-PAS", id_aula, id_pas_lado, config["distancia_aula_a_pasillo_m"],
+                               "plano", True, config["ancho_pasillo_m"], True, SOURCE_CONFIG,
+                               "supuesto", "provisional", NOTA_INTERIOR)
+                    )
 
-    id_pasillo_pb = ids_pasillo_por_piso[1]
+    # --- origenes especiales de PB (oficinas CC en H, laboratorios biotecnologia en G) ---
+    x_h, y_h = hub_xy_m["pasillo_H"]
+    x_g, y_g = hub_xy_m["pasillo_G"]
+    nodos.append(
+        nodo("H-PB-OFICINAS_CC", "Oficinas Departamento de Ciencias de la Computacion (PB, lado H)",
+             "aula", "H", 0, None, None, round(x_h - config["espaciado_aula_m"], 2), round(y_h + config["espaciado_aula_m"] / 2, 2),
+             True, False, None, SOURCE_CONFIG, "supuesto", "provisional", NOTA_INTERIOR)
+    )
+    nodos.append(
+        nodo("G-PB-LAB_BIOTEC", "Laboratorios de Biotecnologia / Ciencias de la Vida (PB, lado G)",
+             "aula", "G", 0, None, None, round(x_g + config["espaciado_aula_m"], 2), round(y_g + config["espaciado_aula_m"] / 2, 2),
+             True, False, None, SOURCE_CONFIG, "supuesto", "provisional", NOTA_INTERIOR)
+    )
     aristas.append(
-        arista(
-            id=f"{letra_bloque}-PB-SALIDA",
-            desde=id_pasillo_pb,
-            hasta=nodo_salida["id"],
-            distancia_m=config["distancia_pasillo_a_salida_m"],
-            tipo="puerta",
-            techado=False,
-            ancho_m=config["ancho_puerta_salida_m"],
-            bloqueable=True,
-            source=source_interior,
-            confidence="supuesto",
-            status="provisional",
-            notes=notes_interior,
-        )
+        arista("H-PB-OFICINAS_CC-PAS", "H-PB-OFICINAS_CC", id_pasillo("H", "PB"), config["distancia_aula_a_pasillo_m"],
+               "plano", True, config["ancho_pasillo_m"], True, SOURCE_CONFIG, "supuesto", "provisional", NOTA_INTERIOR)
+    )
+    aristas.append(
+        arista("G-PB-LAB_BIOTEC-PAS", "G-PB-LAB_BIOTEC", id_pasillo("G", "PB"), config["distancia_aula_a_pasillo_m"],
+               "plano", True, config["ancho_pasillo_m"], True, SOURCE_CONFIG, "supuesto", "provisional", NOTA_INTERIOR)
+    )
+
+    # --- aristas verticales dentro de cada seccion de gradas (llegan a todos los niveles) ---
+    distancia_gradas = altura_piso * config["factor_costo_gradas"] + config["tramo_horizontal_gradas_m"]
+    for seccion, ids_por_nivel in (("NORTE", ids_gradas_norte), ("SUR", ids_gradas_sur)):
+        for nivel_abajo, nivel_arriba in zip(niveles, niveles[1:]):
+            aristas.append(
+                arista(
+                    f"GRADAS-{seccion}-{nivel_abajo}-{nivel_arriba}",
+                    ids_por_nivel[nivel_arriba], ids_por_nivel[nivel_abajo],
+                    round(distancia_gradas, 2), "gradas", True, config["ancho_gradas_m"], True,
+                    SOURCE_CONFIG, "supuesto", "provisional", NOTA_INTERIOR,
+                )
+            )
+
+    # --- PB conecta a Salida A (sur) y Salida B (norte) ---
+    x_gn, y_gn = hub_xy_m["gradas_norte_acceso"]
+    x_gs, y_gs = hub_xy_m["gradas_sur_acceso"]
+    x_a, y_a = proyectar_xy(SALIDA_A["lat"], SALIDA_A["lon"], SALIDA_A["lat"], SALIDA_A["lon"])
+    x_b, y_b = pixel_a_xy(
+        calibracion["puntos_de_control"]["salida_B"]["pixel_x"],
+        calibracion["puntos_de_control"]["salida_B"]["pixel_y"],
+        calibracion,
+    )
+    distancia_sur_a = round(math.hypot(x_gs - x_a, y_gs - y_a), 2)
+    distancia_norte_b = round(math.hypot(x_gn - x_b, y_gn - y_b), 2)
+
+    aristas.append(
+        arista("GRADAS-SUR-PB-SALIDA-A", ids_gradas_sur["PB"], "SALIDA-A", distancia_sur_a, "puerta",
+               False, config["ancho_puerta_salida_m"], True, SOURCE_PLANO, "supuesto", "provisional",
+               "Acceso a gradas sur en PB conecta a Salida A, al sur del complejo (ver captura anotada).")
+    )
+    aristas.append(
+        arista("GRADAS-NORTE-PB-SALIDA-B", ids_gradas_norte["PB"], "SALIDA-B", distancia_norte_b, "puerta",
+               False, config["ancho_puerta_salida_m"], True, SOURCE_PLANO, "supuesto", "provisional",
+               "Acceso a gradas norte en PB conecta a Salida B, al norte del complejo (ver captura anotada).")
     )
 
     return nodos, aristas
 
 
-def verificar_distancia_salidas(
-    observaciones: list[dict[str, Any]],
-) -> list[str]:
-    """Verifica que Salida A y Salida B esten a menos de 40 m del bloque correspondiente.
+def verificar_distancia_salidas_a_gradas(posiciones: dict[str, Any], calibracion: dict[str, Any]) -> list[str]:
+    """Verifica que cada salida este a menos de 40 m de la seccion de gradas mas cercana (en PB).
 
-    Devuelve una lista de advertencias (no rechaza ninguna coordenada).
+    Reemplaza la verificacion de Fase 1 ('distancia a la esquina del bloque'),
+    que ya no aplica: ahora las salidas estan al pie de una seccion de gradas,
+    no pegadas a la fachada de un bloque especifico.
     """
     advertencias = []
-    esquinas_h = [o for o in observaciones if o["id"].startswith("corner_h_")]
-    esquinas_g = [o for o in observaciones if o["id"].startswith("corner_g_")]
+    hub_px = posiciones["nodos_hub"]
 
-    for salida, esquinas, letra in ((SALIDA_A, esquinas_h, "H"), (SALIDA_B, esquinas_g, "G")):
-        distancias = [
-            distancia_haversine_m(salida["lat"], salida["lon"], e["lat"], e["lon"]) for e in esquinas
-        ]
-        distancia_minima = min(distancias) if distancias else None
-        if distancia_minima is None:
-            advertencias.append(
-                f"No hay esquinas registradas del bloque {letra} en maps_observations.json; "
-                f"no se pudo verificar la distancia de {salida['id']}."
-            )
-        elif distancia_minima > DISTANCIA_MAXIMA_SALIDA_BLOQUE_M:
-            advertencias.append(
-                f"{salida['id']} esta a {distancia_minima:.1f} m de la esquina mas cercana "
-                f"del bloque {letra} (umbral: {DISTANCIA_MAXIMA_SALIDA_BLOQUE_M:.0f} m). "
-                "No se rechaza la coordenada; verificar en campo."
-            )
+    x_gn, y_gn = pixel_a_xy(hub_px["gradas_norte_acceso"]["pixel_x"], hub_px["gradas_norte_acceso"]["pixel_y"], calibracion)
+    x_gs, y_gs = pixel_a_xy(hub_px["gradas_sur_acceso"]["pixel_x"], hub_px["gradas_sur_acceso"]["pixel_y"], calibracion)
+    x_a, y_a = 0.0, 0.0  # Salida A es el origen
+    x_b, y_b = pixel_a_xy(
+        calibracion["puntos_de_control"]["salida_B"]["pixel_x"],
+        calibracion["puntos_de_control"]["salida_B"]["pixel_y"],
+        calibracion,
+    )
+
+    d_sur_a = math.hypot(x_gs - x_a, y_gs - y_a)
+    d_norte_b = math.hypot(x_gn - x_b, y_gn - y_b)
+
+    if d_sur_a > DISTANCIA_MAXIMA_SALIDA_GRADAS_M:
+        advertencias.append(
+            f"Salida A esta a {d_sur_a:.1f} m del acceso a gradas sur (umbral: {DISTANCIA_MAXIMA_SALIDA_GRADAS_M:.0f} m)."
+        )
+    if d_norte_b > DISTANCIA_MAXIMA_SALIDA_GRADAS_M:
+        advertencias.append(
+            f"Salida B esta a {d_norte_b:.1f} m del acceso a gradas norte (umbral: {DISTANCIA_MAXIMA_SALIDA_GRADAS_M:.0f} m)."
+        )
     return advertencias
 
 
 def construir_grafo() -> tuple[dict[str, Any], list[str]]:
     """Construye el diccionario completo del grafo de evacuacion y devuelve (grafo, advertencias)."""
     config = cargar_configuracion()
+    posiciones = cargar_json(POSICIONES_PATH)
+    calibracion = cargar_json(CALIBRACION_PATH)
     datos_observaciones = cargar_json(OBSERVACIONES_PATH)
     observaciones = datos_observaciones["observaciones"]
 
-    advertencias = verificar_distancia_salidas(observaciones)
+    advertencias = verificar_distancia_salidas_a_gradas(posiciones, calibracion)
 
     lat0, lon0 = SALIDA_A["lat"], SALIDA_A["lon"]
 
     nodos_exteriores, puntos_encuentro = generar_nodos_exteriores(observaciones, lat0, lon0)
     aristas_exteriores = generar_aristas_exteriores(nodos_exteriores)
 
-    nodo_salida_a = next(n for n in nodos_exteriores if n["id"] == "SALIDA-A")
-    nodo_salida_b = next(n for n in nodos_exteriores if n["id"] == "SALIDA-B")
+    nodos_interior, aristas_interior = generar_complejo_interior(config, posiciones, calibracion)
 
-    nodos_h, aristas_h = generar_bloque_interior("H", nodo_salida_a, config)
-    nodos_g, aristas_g = generar_bloque_interior("G", nodo_salida_b, config)
-
-    id_pasillo_pb_h = "H-P1-PAS"
-    id_pasillo_pb_g = "G-P1-PAS"
-    arista_conexion_h_g = arista(
-        id="CONEXION-PB-H-G",
-        desde=id_pasillo_pb_h,
-        hasta=id_pasillo_pb_g,
-        distancia_m=config["conexion_planta_baja_G_H_m"],
-        tipo="plano",
-        techado=True,
-        ancho_m=config["ancho_pasillo_m"],
-        bloqueable=False,
-        source="data/config_modelo.json (dato dado por el equipo, Fase 1)",
-        confidence="supuesto",
-        status="provisional",
-        notes=(
-            "G y H comparten el mismo edificio: en planta baja se puede pasar de un "
-            "bloque al otro y salir por cualquiera de las dos salidas. Distancia tomada "
-            "tal cual del parametro conexion_planta_baja_G_H_m, no es haversine."
-        ),
-    )
-
-    nodos = nodos_exteriores + nodos_h + nodos_g
-    aristas = aristas_exteriores + aristas_h + aristas_g + [arista_conexion_h_g]
+    nodos = nodos_exteriores + nodos_interior
+    aristas = aristas_exteriores + aristas_interior
 
     grafo = {
         "metadata": {
-            "version": "0.1.0-fase1-provisional",
-            "fecha_actualizacion": "2026-10-25",
+            "version": "0.2.0-fase1bis-provisional",
+            "fecha_actualizacion": "2026-10-26",
             "origen_x_y_m": "SALIDA-A (lat -0.313162, lon -78.445291)",
             "notes": (
-                "Grafo PROVISIONAL de Fase 1 para los bloques G y H. Contiene supuestos "
-                "de interior (pisos, aulas, gradas) y 3 puntos de encuentro provisionales "
-                "no oficiales. Ver data/pendientes.md para lo que falta verificar en campo."
+                "Grafo PROVISIONAL de Fase 1-bis: complejo unico G/H/C/D (solo G y H son "
+                "origenes), 2 secciones de gradas compartidas (norte, sur) y 2 salidas. "
+                "Reconstruido sobre data/maps/plano_base_GH_anotado.jpeg calibrada "
+                "(data/calibracion_plano.json, data/posiciones_plano.json). "
+                "Ver data/pendientes.md para lo que falta verificar en campo."
             ),
             "provisional": True,
         },
@@ -593,27 +559,18 @@ def resumir(grafo: dict[str, Any], advertencias: list[str]) -> str:
     nodos = grafo["nodos"]
     aristas = grafo["aristas"]
 
-    conteo_confidence_nodos: dict[str, int] = {}
+    conteo_tipo_nodos: dict[str, int] = {}
     for n in nodos:
-        conteo_confidence_nodos[n["confidence"]] = conteo_confidence_nodos.get(n["confidence"], 0) + 1
-
-    conteo_confidence_aristas: dict[str, int] = {}
-    for a in aristas:
-        conteo_confidence_aristas[a["confidence"]] = conteo_confidence_aristas.get(a["confidence"], 0) + 1
+        conteo_tipo_nodos[n["tipo"]] = conteo_tipo_nodos.get(n["tipo"], 0) + 1
 
     lineas = [
         f"Nodos totales: {len(nodos)}",
         f"Aristas totales: {len(aristas)}",
         f"Puntos de encuentro: {len(grafo['puntos_encuentro'])}",
-        "Nodos por confidence:",
+        "Nodos por tipo:",
     ]
-    for conf, cantidad in sorted(conteo_confidence_nodos.items()):
-        porcentaje = cantidad / len(nodos) * 100
-        lineas.append(f"  {conf}: {cantidad} ({porcentaje:.1f}%)")
-    lineas.append("Aristas por confidence:")
-    for conf, cantidad in sorted(conteo_confidence_aristas.items()):
-        porcentaje = cantidad / len(aristas) * 100
-        lineas.append(f"  {conf}: {cantidad} ({porcentaje:.1f}%)")
+    for tipo, cantidad in sorted(conteo_tipo_nodos.items()):
+        lineas.append(f"  {tipo}: {cantidad}")
 
     lineas.append(f"Advertencias ({len(advertencias)}):")
     if not advertencias:

@@ -76,7 +76,8 @@
         },
         "bloque": {
           "type": "string",
-          "enum": ["G", "H", "exterior"]
+          "enum": ["G", "H", "exterior", "compartido"],
+          "description": "'compartido' (desde Fase 1-bis): nodos interiores compartidos por G y H que no pertenecen a un solo bloque (pasillo central, accesos a las secciones de gradas norte/sur)."
         },
         "piso": {
           "type": ["integer", "null"],

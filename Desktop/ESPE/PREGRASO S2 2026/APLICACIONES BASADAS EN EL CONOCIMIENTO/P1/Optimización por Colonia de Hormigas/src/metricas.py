@@ -98,19 +98,16 @@ def calcular_metricas_todos_los_origenes(
     config_modelo: dict[str, Any],
     aristas_bloqueadas: frozenset[str] = frozenset(),
 ) -> list[MetricasOrigen]:
-    """Calcula MetricasOrigen para cada uno de los origenes_representativos de config_modelo.json."""
-    origenes = config_modelo["origenes_representativos"]
+    """Calcula MetricasOrigen para cada uno de los 42 origenes de poblacion_por_origen
+    (40 aulas + 2 origenes de PB), que son los origenes oficiales para los experimentos
+    (ver data/config_modelo.json). Para pruebas rapidas con menos origenes, usar
+    config_modelo['origenes_representativos'] (10) directamente con calcular_metricas_origen().
+    """
     poblaciones = config_modelo["poblacion_por_origen"]
 
     return [
-        calcular_metricas_origen(
-            grafo,
-            o["id_nodo"],
-            poblaciones[o["id_nodo"]],
-            config_modelo,
-            aristas_bloqueadas,
-        )
-        for o in origenes
+        calcular_metricas_origen(grafo, id_origen, poblacion, config_modelo, aristas_bloqueadas)
+        for id_origen, poblacion in poblaciones.items()
     ]
 
 

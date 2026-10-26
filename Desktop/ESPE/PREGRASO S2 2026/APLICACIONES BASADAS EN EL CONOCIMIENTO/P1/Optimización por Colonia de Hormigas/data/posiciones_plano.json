@@ -1,0 +1,37 @@
+{
+  "descripcion": "Posiciones de pixel (sobre data/maps/plano_base_GH_anotado.jpeg) de los nodos 'hub' que se repiten en cada nivel del complejo: pasillo lateral de H, pasillo lateral de G, pasillo central, y los accesos a las dos secciones de gradas. EDITABLE A MANO por el equipo: si alguien mide mejor estos puntos sobre la imagen (o sobre un plano real del edificio), basta con cambiar pixel_x/pixel_y aqui; scripts/build_graph.py recalcula las distancias horizontales automaticamente usando data/calibracion_plano.json. Las coordenadas de Salida A y Salida B NO estan aqui: ya viven en data/campus_graph.json con su propio lat/lon medido en Maps (ver scripts/build_graph.py, constantes SALIDA_A/SALIDA_B).",
+  "fecha_actualizacion": "2026-10-26",
+  "nota_metodologica": "Estas posiciones se estimaron visualmente sobre el area amarilla (pasillos) y los zigzags rojos (gradas) de la captura anotada por el equipo; se repiten identicas en los 5 niveles (PB,1,2,3,4) porque el equipo confirmo que la distribucion de pasillos se repite en cada nivel (supuesto, ver data/config_modelo.json). Confidence 'supuesto' para todas; ninguna viene de una medicion en campo.",
+  "nodos_hub": {
+    "pasillo_H": {
+      "pixel_x": 720,
+      "pixel_y": 280,
+      "descripcion": "Pasillo lateral del lado H (bloque H), sobre la franja amarilla junto al contorno rojo de Bloque H, sector donde abren las aulas H1xx-H4xx.",
+      "confidence": "supuesto"
+    },
+    "pasillo_G": {
+      "pixel_x": 900,
+      "pixel_y": 300,
+      "descripcion": "Pasillo lateral del lado G (bloque G / Laboratorios de computacion), sobre la franja amarilla junto al contorno rojo de Bloque G, sector donde abren las aulas G1xx-G4xx.",
+      "confidence": "supuesto"
+    },
+    "pasillo_central": {
+      "pixel_x": 800,
+      "pixel_y": 325,
+      "descripcion": "Centro del pasillo perimetral amarillo que rodea el patio/estructura central; actua como nodo 'hub' que conecta pasillo_H, pasillo_G y los dos accesos a gradas en cada nivel.",
+      "confidence": "supuesto"
+    },
+    "gradas_norte_acceso": {
+      "pixel_x": 895,
+      "pixel_y": 230,
+      "descripcion": "Acceso a la seccion de gradas NORTE (zigzag rojo entre Bloque D y Laboratorios de computacion/Bloque G).",
+      "confidence": "supuesto"
+    },
+    "gradas_sur_acceso": {
+      "pixel_x": 800,
+      "pixel_y": 457,
+      "descripcion": "Acceso a la seccion de gradas SUR (zigzag rojo entre el patio central/G y Bloque C), muy cerca de Salida A.",
+      "confidence": "supuesto"
+    }
+  }
+}

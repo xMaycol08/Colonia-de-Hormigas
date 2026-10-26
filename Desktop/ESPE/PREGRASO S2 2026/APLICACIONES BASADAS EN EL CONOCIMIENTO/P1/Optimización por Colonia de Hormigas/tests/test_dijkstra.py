@@ -48,9 +48,9 @@ def test_dijkstra_sobre_el_grafo_real_encuentra_ruta():
     grafo_real = cargar_grafo()
     config_modelo = cargar_configuracion(CONFIG_MODELO_PATH)
 
-    resultado = buscar_ruta(grafo_real, "H-P3-AULA01", config_modelo)
+    resultado = buscar_ruta(grafo_real, "H301", config_modelo)
 
     assert resultado.tiene_ruta
     assert resultado.costo > 0
-    assert resultado.camino[0] == "H-P3-AULA01"
+    assert resultado.camino[0] == "H301"
     assert grafo_real.es_punto_encuentro(resultado.camino[-1])

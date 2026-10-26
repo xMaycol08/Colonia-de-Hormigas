@@ -1,9 +1,10 @@
 # PEAS y clasificación del agente de evacuación
 
 Este documento describe el agente implementado en `src/agente.py`
-(`AgenteEvacuacion`), consistente con el modelo del grafo construido en
-Fase 1 (`data/campus_graph.json`) y con el Protocolo de actuación ante
-sismos citado en `docs/restricciones_oficiales.md`.
+(`AgenteEvacuacion`), consistente con el modelo del grafo reconstruido en
+Fase 1-bis (`data/campus_graph.json`: complejo compartido G/H/C/D, 2
+secciones de gradas norte/sur y 2 salidas) y con el Protocolo de actuación
+ante sismos citado en `docs/restricciones_oficiales.md`.
 
 ## PEAS
 
@@ -28,20 +29,23 @@ secciones 1-5):
 
 ### Entorno (Environment)
 
-Los bloques G y H de la ESPE Matriz, representados como el grafo de
-evacuación (`data/campus_graph.json`): aulas, pasillos, gradas, salidas,
-vías exteriores y puntos de encuentro, con un conjunto de aristas que puede
-quedar bloqueado (gradas o salidas colapsadas/obstruidas) y, opcionalmente,
-congestionado (más personas en una misma arista).
+El complejo G/H (laboratorios, con C y D como bloques de paso sin población)
+de la ESPE Matriz, representado como el grafo de evacuación
+(`data/campus_graph.json`): 42 orígenes (40 aulas + 2 orígenes de planta
+baja), pasillos (H, G y central), 2 secciones de gradas compartidas (norte
+y sur, cada una conectando los 5 niveles PB-4), 2 salidas, vías exteriores
+y puntos de encuentro, con un conjunto de aristas que puede quedar
+bloqueado (una sección de gradas o una salida inutilizada tras el sismo) y,
+opcionalmente, congestionado (más personas en una misma arista).
 
 ### Actuadores (Actuators)
 
 - `decidir()`: calcula una ruta (vía ACO, opcionalmente comparada con
   Dijkstra) desde el origen hasta algún punto de encuentro.
 - `actuar()`: traduce esa ruta en instrucciones legibles paso a paso (p. ej.
-  "Sale del Aula 01, piso 3, bloque H" → "Baja por Gradas 02" → "Sale por
-  SALIDA-A" → "Llega a PE-1 (provisional)") y un tiempo estimado en
-  segundos.
+  "Sale del Aula H301" → "Camina por el pasillo H, nivel 3" → "Baja por
+  Gradas sur" → "Sale por SALIDA-A" → "Llega a PE-1 (provisional)") y un
+  tiempo estimado en segundos.
 
 En un despliegue real estos "actuadores" serían, por ejemplo, señalización
 dinámica, un altavoz o una app que muestra las instrucciones a la persona;
@@ -89,7 +93,8 @@ El `AgenteEvacuacion` combina dos enfoques clásicos:
   que funciona como una función de utilidad (negativa) combinando distancia
   y una penalización por estar techado (alineada con el Protocolo de
   sismo). ACO aproxima el óptimo de esa utilidad mediante búsqueda
-  estocástica guiada por feromona y heurística (`1/costo`); Dijkstra la
+  estocástica guiada por feromona y heurística tipo A* (`1/(costo+h)`,
+  ver `docs/decisiones_fase2.md`); Dijkstra la
   calcula exactamente. Que el agente prefiera una ruta más corta y menos
   techada sobre otra que también llega a un punto de encuentro, es
   precisamente razonamiento basado en utilidad: distingue "mejor" de
