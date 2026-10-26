@@ -1,7 +1,7 @@
 """Metricas de evacuacion para los origenes representativos.
 
 Reproduce, de forma aproximada, las dos metricas oficiales de la Guia de
-simulacros (docs/restricciones_oficiales.md, seccion 5): tiempo de la
+simulacros (docs/base_informe.md, seccion (b), seccion 5): tiempo de la
 PRIMERA persona y tiempo de la ULTIMA persona en llegar a un punto de
 encuentro, medidos desde la emision de la alerta (aqui: desde tiempo 0).
 

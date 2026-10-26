@@ -1,0 +1,4 @@
+Prueba de cordura: costo_ACO >= costo_Dijkstra - 1e-9 sobre el grafo de cada escenario
+Corridas exitosas verificadas: 20077
+Violaciones: 0
+Resultado: APROBADA

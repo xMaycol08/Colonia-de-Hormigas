@@ -1,5 +1,5 @@
 {
-  "descripcion": "Calibracion pixel -> metros locales (x_m, y_m) -> lat/lon para data/maps/plano_base_GH_anotado.jpeg, usada por scripts/build_graph.py y scripts/plot_graph.py para superponer el grafo sobre el plano real (Tarea D.1, Fase 1-bis). Se usa la imagen ANOTADA (no la limpia) porque contiene las dos X de control y porque su propia marcacion del equipo sirve de referencia visual adicional; data/maps/plano_base_GH_limpio.png no se calibro por separado (tiene otro encuadre/zoom).",
+  "descripcion": "Calibracion pixel -> metros locales (x_m, y_m) -> lat/lon para data/maps/plano_base_GH_anotado.jpeg, usada por scripts/build_graph.py y src/plano.py para superponer el grafo sobre el plano real (Tarea D.1, Fase 1-bis). Se usa la imagen ANOTADA (no la limpia) porque contiene las dos X de control y porque su propia marcacion del equipo sirve de referencia visual adicional; data/maps/plano_base_GH_limpio.png no se calibro por separado (tiene otro encuadre/zoom).",
   "imagen": "data/maps/plano_base_GH_anotado.jpeg",
   "imagen_ancho_px": 1600,
   "imagen_alto_px": 782,

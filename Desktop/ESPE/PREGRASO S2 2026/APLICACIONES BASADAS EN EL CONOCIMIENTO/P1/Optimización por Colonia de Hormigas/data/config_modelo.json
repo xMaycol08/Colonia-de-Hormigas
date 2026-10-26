@@ -1,6 +1,6 @@
 {
   "provisional": true,
-  "descripcion": "Parametros numericos del modelo del grafo de evacuacion de los bloques G y H. Reconstruido en Fase 1-bis segun la verdad de campo del equipo sobre data/maps/plano_base_GH_anotado.jpeg: G y H comparten un solo complejo con C y D (de paso, sin poblacion), 2 secciones de gradas compartidas (norte y sur) en vez de escaleras por bloque, y 2 salidas (ya existian). Ningun numero del modelo debe escribirse en el codigo: scripts/build_graph.py y scripts/plot_graph.py deben leerlos siempre de aqui.",
+  "descripcion": "Parametros numericos del modelo del grafo de evacuacion de los bloques G y H. Reconstruido en Fase 1-bis segun la verdad de campo del equipo sobre data/maps/plano_base_GH_anotado.jpeg: G y H comparten un solo complejo con C y D (de paso, sin poblacion), 2 secciones de gradas compartidas (norte y sur) en vez de escaleras por bloque, y 2 salidas (ya existian). Ningun numero del modelo debe escribirse en el codigo: scripts/build_graph.py y src/plano.py deben leerlos siempre de aqui.",
   "fecha_actualizacion": "2026-10-26",
   "parametros": {
     "niveles": {
@@ -97,7 +97,7 @@
       "value": 4.0,
       "supuesto": true,
       "confidence": "supuesto",
-      "comentario": "Solo para visualizacion esquematica (scripts/plot_graph.py): separacion horizontal entre aulas en el layout de cada nivel. No representa una medicion real."
+      "comentario": "Solo para visualizacion esquematica (src/plano.py): separacion horizontal entre aulas en el layout de cada nivel. No representa una medicion real."
     },
     "factor_congestion_demo": {
       "value": 3.0,
