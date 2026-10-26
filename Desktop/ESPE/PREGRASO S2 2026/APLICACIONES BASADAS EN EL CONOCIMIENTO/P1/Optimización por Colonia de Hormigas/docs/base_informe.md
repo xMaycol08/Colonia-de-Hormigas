@@ -106,6 +106,24 @@ El agente (`src/agente.py`, `AgenteEvacuacion`) sigue el ciclo percibir, decidir
 | Un agente / multiagente | Multiagente (cooperativo) | En la evacuación real hay muchas personas; el agente modela a una persona u origen sin competir con las demás |
 | Conocido / desconocido | Parcialmente conocido | Las reglas del modelo (costos, ACO) son conocidas; varios datos del entorno (interior, puntos de encuentro reales) son supuestos |
 
+### Delimitación del agente
+
+Para evitar ambigüedades, esto es exactamente lo que el agente es, hace y no hace en este trabajo (`src/agente.py`, `AgenteEvacuacion`):
+
+| Aspecto | Delimitación |
+|---|---|
+| Qué es | Un agente que planifica la ruta de **una persona** que parte de **un origen** (una de las 42 aulas u orígenes de PB). Se crea con el grafo, los parámetros del modelo, los parámetros de ACO y el origen |
+| Qué percibe (entrada) | Un `EstadoPercibido` con dos datos: las aristas bloqueadas (por ejemplo, una sección de gradas o el acceso a una salida) y un factor de congestión por arista. No percibe nada más: no ve personas, humo, réplicas ni el estado real del edificio |
+| Qué decide | La ruta del origen hacia **algún** punto de encuentro (cualquiera de los 3). La decisión la toma **ACO**; por defecto la variante guiada, y la variante clásica si se le indica. Si ya decidió antes, reutiliza la feromona anterior (warm start) para volver a decidir con el nuevo estado |
+| Papel de Dijkstra | Solo de referencia: se puede calcular para comparar y medir la brecha, pero **no interviene en la decisión del agente**. `src/aco.py` no lo llama (comprobado en la auditoría) |
+| Qué hace (salida) | Devuelve la ruta como lista de nodos, sus instrucciones paso a paso en texto y el tiempo estimado de recorrido (costo / velocidad de caminata). Si no hay ruta, `actuar()` lanza un error explícito (`ValueError`) en lugar de devolver algo inválido |
+| Meta (prueba de meta) | Llegar a un nodo de tipo punto de encuentro. Meta binaria y con varias soluciones válidas |
+| Utilidad | Menor costo de ruta (distancia, con el factor de gradas y la penalización de tramos techados). Es lo que optimiza ACO y lo que calcula exacto Dijkstra |
+| Cuándo actúa | Después de que cesa el movimiento (Protocolo, pág. 2, "Después del sismo", punto 1). El modelo no simula el sismo ni el tiempo de protección en el espacio vital |
+| Alcance del entorno | Solo el grafo del complejo G/H (75 nodos, 79 aristas) y la red exterior hasta los 3 puntos de encuentro hipotéticos. Fuera de ese grafo el agente no sabe nada |
+| Qué NO es ni hace | No simula a las 1020 personas como 1020 agentes que interactúan: la evacuación completa calcula la ruta de cada origen y suma los tiempos con un modelo simple, sin colas, sin capacidad de gradas o salidas y sin interacción entre personas. No aprende entre simulacros. No decide por el punto de encuentro "real" de la ESPE, porque se desconoce. No coordina a las personas entre sí |
+| Cómo se evaluó | Calidad de la ruta frente al óptimo de Dijkstra, tiempo de cómputo, tasa de éxito, adaptación a bloqueos (frío contra warm start), y tiempos de la primera y de la última persona en llegar al punto de encuentro (métricas de la guía de simulacros) |
+
 **Tipo de agente: basado en metas y en utilidad.** Basado en metas porque el éxito es llegar a *algún* punto de encuentro (varias metas válidas); basado en utilidad porque, entre todas las rutas que cumplen la meta, busca la de menor costo, que actúa como utilidad negativa (distancia más penalización de tramos techados, alineada con el Protocolo). Dijkstra calcula el óptimo exacto; ACO lo aproxima por búsqueda estocástica guiada por feromona.
 
 ## (e) Optimización por Colonia de Hormigas
