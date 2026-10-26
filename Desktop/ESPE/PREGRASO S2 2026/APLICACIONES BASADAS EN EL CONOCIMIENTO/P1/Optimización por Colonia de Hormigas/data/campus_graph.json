@@ -3,7 +3,7 @@
     "version": "0.2.0-fase1bis-provisional",
     "fecha_actualizacion": "2026-10-26",
     "origen_x_y_m": "SALIDA-A (lat -0.313162, lon -78.445291)",
-    "notes": "Grafo PROVISIONAL de Fase 1-bis: complejo unico G/H/C/D (solo G y H son origenes), 2 secciones de gradas compartidas (norte, sur) y 2 salidas. Reconstruido sobre data/maps/plano_base_GH_anotado.jpeg calibrada (data/calibracion_plano.json, data/posiciones_plano.json). Ver data/pendientes.md para lo que falta verificar en campo.",
+    "notes": "Grafo PROVISIONAL de Fase 1-bis: complejo unico G/H/C/D (solo G y H son origenes), 2 secciones de gradas compartidas (norte, sur) y 2 salidas. Reconstruido sobre data/maps/plano_base_GH_anotado.jpeg calibrada (data/calibracion_plano.json, data/posiciones_plano.json). Ver docs/base_informe.md, seccion (c) para lo que falta verificar en campo.",
     "provisional": true
   },
   "nodos": [
@@ -167,7 +167,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-G-PB",
@@ -185,7 +185,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-CENTRAL-PB",
@@ -203,7 +203,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "GRADAS-NORTE-PB",
@@ -221,7 +221,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "GRADAS-SUR-PB",
@@ -239,7 +239,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-H-1",
@@ -257,7 +257,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-G-1",
@@ -275,7 +275,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-CENTRAL-1",
@@ -293,7 +293,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "GRADAS-NORTE-1",
@@ -311,7 +311,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "GRADAS-SUR-1",
@@ -329,7 +329,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H101",
@@ -347,7 +347,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H102",
@@ -365,7 +365,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H103",
@@ -383,7 +383,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H104",
@@ -401,7 +401,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H105",
@@ -419,7 +419,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G101",
@@ -437,7 +437,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G102",
@@ -455,7 +455,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G103",
@@ -473,7 +473,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G104",
@@ -491,7 +491,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G105",
@@ -509,7 +509,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-H-2",
@@ -527,7 +527,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-G-2",
@@ -545,7 +545,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-CENTRAL-2",
@@ -563,7 +563,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "GRADAS-NORTE-2",
@@ -581,7 +581,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "GRADAS-SUR-2",
@@ -599,7 +599,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H201",
@@ -617,7 +617,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H202",
@@ -635,7 +635,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H203",
@@ -653,7 +653,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H204",
@@ -671,7 +671,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H205",
@@ -689,7 +689,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G201",
@@ -707,7 +707,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G202",
@@ -725,7 +725,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G203",
@@ -743,7 +743,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G204",
@@ -761,7 +761,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G205",
@@ -779,7 +779,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-H-3",
@@ -797,7 +797,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-G-3",
@@ -815,7 +815,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-CENTRAL-3",
@@ -833,7 +833,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "GRADAS-NORTE-3",
@@ -851,7 +851,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "GRADAS-SUR-3",
@@ -869,7 +869,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H301",
@@ -887,7 +887,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H302",
@@ -905,7 +905,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H303",
@@ -923,7 +923,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H304",
@@ -941,7 +941,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H305",
@@ -959,7 +959,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G301",
@@ -977,7 +977,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G302",
@@ -995,7 +995,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G303",
@@ -1013,7 +1013,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G304",
@@ -1031,7 +1031,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G305",
@@ -1049,7 +1049,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-H-4",
@@ -1067,7 +1067,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-G-4",
@@ -1085,7 +1085,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-CENTRAL-4",
@@ -1103,7 +1103,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "GRADAS-NORTE-4",
@@ -1121,7 +1121,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "GRADAS-SUR-4",
@@ -1139,7 +1139,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H401",
@@ -1157,7 +1157,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H402",
@@ -1175,7 +1175,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H403",
@@ -1193,7 +1193,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H404",
@@ -1211,7 +1211,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H405",
@@ -1229,7 +1229,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G401",
@@ -1247,7 +1247,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G402",
@@ -1265,7 +1265,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G403",
@@ -1283,7 +1283,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G404",
@@ -1301,7 +1301,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G405",
@@ -1319,7 +1319,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H-PB-OFICINAS_CC",
@@ -1337,7 +1337,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G-PB-LAB_BIOTEC",
@@ -1355,7 +1355,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     }
   ],
   "aristas": [
@@ -1469,7 +1469,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-G-CENTRAL-PB",
@@ -1483,7 +1483,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-CENTRAL-GRADAS-NORTE-PB",
@@ -1497,7 +1497,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-CENTRAL-GRADAS-SUR-PB",
@@ -1511,7 +1511,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-H-CENTRAL-1",
@@ -1525,7 +1525,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-G-CENTRAL-1",
@@ -1539,7 +1539,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-CENTRAL-GRADAS-NORTE-1",
@@ -1553,7 +1553,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-CENTRAL-GRADAS-SUR-1",
@@ -1567,7 +1567,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H101-PAS",
@@ -1581,7 +1581,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H102-PAS",
@@ -1595,7 +1595,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H103-PAS",
@@ -1609,7 +1609,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H104-PAS",
@@ -1623,7 +1623,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H105-PAS",
@@ -1637,7 +1637,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G101-PAS",
@@ -1651,7 +1651,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G102-PAS",
@@ -1665,7 +1665,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G103-PAS",
@@ -1679,7 +1679,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G104-PAS",
@@ -1693,7 +1693,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G105-PAS",
@@ -1707,7 +1707,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-H-CENTRAL-2",
@@ -1721,7 +1721,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-G-CENTRAL-2",
@@ -1735,7 +1735,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-CENTRAL-GRADAS-NORTE-2",
@@ -1749,7 +1749,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-CENTRAL-GRADAS-SUR-2",
@@ -1763,7 +1763,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H201-PAS",
@@ -1777,7 +1777,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H202-PAS",
@@ -1791,7 +1791,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H203-PAS",
@@ -1805,7 +1805,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H204-PAS",
@@ -1819,7 +1819,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H205-PAS",
@@ -1833,7 +1833,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G201-PAS",
@@ -1847,7 +1847,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G202-PAS",
@@ -1861,7 +1861,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G203-PAS",
@@ -1875,7 +1875,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G204-PAS",
@@ -1889,7 +1889,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G205-PAS",
@@ -1903,7 +1903,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-H-CENTRAL-3",
@@ -1917,7 +1917,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-G-CENTRAL-3",
@@ -1931,7 +1931,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-CENTRAL-GRADAS-NORTE-3",
@@ -1945,7 +1945,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-CENTRAL-GRADAS-SUR-3",
@@ -1959,7 +1959,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H301-PAS",
@@ -1973,7 +1973,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H302-PAS",
@@ -1987,7 +1987,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H303-PAS",
@@ -2001,7 +2001,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H304-PAS",
@@ -2015,7 +2015,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H305-PAS",
@@ -2029,7 +2029,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G301-PAS",
@@ -2043,7 +2043,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G302-PAS",
@@ -2057,7 +2057,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G303-PAS",
@@ -2071,7 +2071,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G304-PAS",
@@ -2085,7 +2085,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G305-PAS",
@@ -2099,7 +2099,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-H-CENTRAL-4",
@@ -2113,7 +2113,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-G-CENTRAL-4",
@@ -2127,7 +2127,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-CENTRAL-GRADAS-NORTE-4",
@@ -2141,7 +2141,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "PAS-CENTRAL-GRADAS-SUR-4",
@@ -2155,7 +2155,7 @@
       "source": "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H401-PAS",
@@ -2169,7 +2169,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H402-PAS",
@@ -2183,7 +2183,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H403-PAS",
@@ -2197,7 +2197,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H404-PAS",
@@ -2211,7 +2211,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H405-PAS",
@@ -2225,7 +2225,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G401-PAS",
@@ -2239,7 +2239,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G402-PAS",
@@ -2253,7 +2253,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G403-PAS",
@@ -2267,7 +2267,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G404-PAS",
@@ -2281,7 +2281,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G405-PAS",
@@ -2295,7 +2295,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "H-PB-OFICINAS_CC-PAS",
@@ -2309,7 +2309,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "G-PB-LAB_BIOTEC-PAS",
@@ -2323,7 +2323,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "GRADAS-NORTE-PB-1",
@@ -2337,7 +2337,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "GRADAS-NORTE-1-2",
@@ -2351,7 +2351,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "GRADAS-NORTE-2-3",
@@ -2365,7 +2365,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "GRADAS-NORTE-3-4",
@@ -2379,7 +2379,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "GRADAS-SUR-PB-1",
@@ -2393,7 +2393,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "GRADAS-SUR-1-2",
@@ -2407,7 +2407,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "GRADAS-SUR-2-3",
@@ -2421,7 +2421,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "GRADAS-SUR-3-4",
@@ -2435,7 +2435,7 @@
       "source": "data/config_modelo.json (supuesto del equipo, Fase 1-bis)",
       "confidence": "supuesto",
       "status": "provisional",
-      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver data/pendientes.md)."
+      "notes": "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con verificacion de campo (ver docs/base_informe.md, seccion (c))."
     },
     {
       "id": "GRADAS-SUR-PB-SALIDA-A",

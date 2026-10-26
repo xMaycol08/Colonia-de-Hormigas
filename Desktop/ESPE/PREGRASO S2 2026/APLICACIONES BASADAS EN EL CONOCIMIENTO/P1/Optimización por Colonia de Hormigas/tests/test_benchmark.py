@@ -9,7 +9,8 @@ RAIZ_PROYECTO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ_PROYECTO / "src"))
 
 from grafo import cargar_grafo, cargar_configuracion, CONFIG_MODELO_PATH, CONFIG_ACO_PATH  # noqa: E402
-from benchmark import ejecutar_benchmark, resumir_benchmark, barrido_sensibilidad, Escenario  # noqa: E402
+from benchmark import ejecutar_benchmark, resumir_benchmark, barrido_sensibilidad  # noqa: E402
+from escenarios import Escenario  # noqa: E402
 
 
 def test_ejecutar_benchmark_con_n_pequeno_genera_csv(tmp_path, monkeypatch):

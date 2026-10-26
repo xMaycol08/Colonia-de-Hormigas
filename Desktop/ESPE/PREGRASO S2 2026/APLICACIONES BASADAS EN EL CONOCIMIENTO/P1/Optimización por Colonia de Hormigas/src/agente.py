@@ -1,6 +1,6 @@
 """Agente de evacuacion: ciclo percibir -> decidir -> actuar.
 
-Ver docs/agente_peas.md para el analisis PEAS completo y la clasificacion
+Ver docs/base_informe.md, seccion (d) para el analisis PEAS completo y la clasificacion
 del entorno y del tipo de agente.
 """
 
@@ -68,7 +68,7 @@ class AgenteEvacuacion:
         sin congestion); el agente modela la congestion inflando la
         distancia_m efectiva de las aristas congestionadas antes de llamar a
         Dijkstra/ACO (grafo.aplicar_congestion). Decision de diseno de la
-        Fase 2: ver docs/decisiones_fase2.md.
+        Fase 2: ver docs/base_informe.md, seccion (e).
         """
         return aplicar_congestion(self.grafo, self.estado.congestion)
 
@@ -77,6 +77,7 @@ class AgenteEvacuacion:
         comparar_con_dijkstra: bool = False,
         usar_warm_start: bool = True,
         semilla: int | None = None,
+        variante: str = "guiado",
     ) -> DecisionAgente:
         """Decide la ruta a seguir: corre ACO (con warm start si hay una solucion previa).
 
@@ -95,6 +96,7 @@ class AgenteEvacuacion:
             aristas_bloqueadas=self.estado.aristas_bloqueadas,
             feromona_inicial=feromona_inicial,
             semilla=semilla,
+            variante=variante,
         )
         self._feromona_previa = resultado_aco.feromona_final
 

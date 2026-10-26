@@ -2,7 +2,7 @@
 
 Se usa el grafo pequeno (no el real) para que el mecanismo de ACO (muestreo,
 feromona, tabu, bloqueos, warm start) se pueda verificar de forma rapida y
-determinista. Ver docs/decisiones_fase2.md para la justificacion: con los
+determinista. Ver docs/base_informe.md, seccion (e) para la justificacion: con los
 valores por defecto de data/config_aco.json, el grafo REAL tiene una tasa de
 exito por hormiga tan baja (~0.01%-0.05%) que ACO casi nunca converge en
 100 iteraciones / paciencia 25; eso no es un bug, es un hallazgo de esta

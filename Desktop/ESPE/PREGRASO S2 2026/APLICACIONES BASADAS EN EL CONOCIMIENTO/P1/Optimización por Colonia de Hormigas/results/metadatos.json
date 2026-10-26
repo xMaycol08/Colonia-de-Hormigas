@@ -1,0 +1,34 @@
+{
+  "fecha": "2026-10-26T23:21:09",
+  "python": "3.13.17 (main, Oct 22 2026, 14:06:04) [GCC 13.3.0]",
+  "plataforma": "Linux-6.18.44-fc-v165-x86_64-with-glibc2.39",
+  "cpu": "x86_64",
+  "librerias": {
+    "pandas": "3.0.5",
+    "numpy": "2.5.3",
+    "matplotlib": "3.11.2",
+    "streamlit": "1.66.1",
+    "PIL": "12.3.0"
+  },
+  "semilla_base": 1000,
+  "corridas": {
+    "benchmark": 30,
+    "adaptacion": 30,
+    "sensibilidad": 30,
+    "repeticiones_tiempo_dijkstra": 30
+  },
+  "origenes": 42,
+  "escenarios": [
+    "Normal",
+    "Gradas Norte bloqueadas",
+    "Gradas Sur bloqueadas",
+    "Salida A bloqueada",
+    "Salida B bloqueada",
+    "Congestion en una salida"
+  ],
+  "reduccion_aplicada": null,
+  "estimacion_previa_min": 8.89,
+  "duracion_real_min": 7.35,
+  "corridas_verificadas_cordura": 20077,
+  "oficial": true
+}

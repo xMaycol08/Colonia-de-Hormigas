@@ -6,7 +6,6 @@ necesidad de correr Streamlit, y para que la app no duplique esta logica.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -15,19 +14,11 @@ import pandas as pd
 
 from aco import ejecutar_aco
 from dijkstra import buscar_ruta
+from escenarios import Escenario
 from grafo import Grafo, aplicar_congestion
 
 RAIZ_PROYECTO = Path(__file__).resolve().parent.parent
 RESULTS_DIR = RAIZ_PROYECTO / "results"
-
-
-@dataclass
-class Escenario:
-    """Un escenario de bloqueo/congestion para el benchmark o la app."""
-
-    nombre: str
-    aristas_bloqueadas: frozenset[str]
-    congestion: dict[str, float]
 
 
 def ejecutar_benchmark(
@@ -38,24 +29,28 @@ def ejecutar_benchmark(
     config_aco: dict[str, Any],
     n_corridas: int,
     guardar_csv: bool = True,
+    variante: str = "guiado",
+    semilla_base: int = 0,
 ) -> tuple[pd.DataFrame, Path | None]:
-    """Corre Dijkstra (1 vez) y ACO (n_corridas veces, semillas 0..n_corridas-1)
-    para cada combinacion (origen, escenario). Devuelve (df_corridas_individuales, ruta_csv).
+    """Corre Dijkstra (1 vez) y ACO (n_corridas veces, semillas semilla_base..semilla_base+n_corridas-1)
+    para cada combinacion (origen, escenario), con la variante de ACO indicada
+    ("guiado" o "clasico"). Dijkstra se calcula sobre el grafo del escenario
+    (con congestion), igual que ACO. Devuelve (df_corridas_individuales, ruta_csv).
 
     df_corridas_individuales tiene una fila por corrida de ACO, con columnas:
-    origen, escenario, semilla, tiene_ruta, costo, costo_dijkstra, brecha_pct,
+    variante, origen, escenario, semilla, tiene_ruta, costo, costo_dijkstra, brecha_pct,
     tiempo_ms, iteracion_convergencia, tiempo_dijkstra_ms, nodos_expandidos_dijkstra.
     """
     filas = []
 
     for escenario in escenarios:
         for origen in origenes:
-            resultado_dijkstra = buscar_ruta(
-                grafo, origen, config_modelo, aristas_bloqueadas=escenario.aristas_bloqueadas
-            )
             grafo_escenario = aplicar_congestion(grafo, escenario.congestion)
+            resultado_dijkstra = buscar_ruta(
+                grafo_escenario, origen, config_modelo, aristas_bloqueadas=escenario.aristas_bloqueadas
+            )
 
-            for semilla in range(n_corridas):
+            for semilla in range(semilla_base, semilla_base + n_corridas):
                 resultado_aco = ejecutar_aco(
                     grafo_escenario,
                     origen,
@@ -63,6 +58,7 @@ def ejecutar_benchmark(
                     config_aco,
                     aristas_bloqueadas=escenario.aristas_bloqueadas,
                     semilla=semilla,
+                    variante=variante,
                 )
 
                 brecha_pct = None
@@ -73,6 +69,7 @@ def ejecutar_benchmark(
 
                 filas.append(
                     {
+                        "variante": f"ACO {variante}",
                         "origen": origen,
                         "escenario": escenario.nombre,
                         "semilla": semilla,
@@ -103,10 +100,11 @@ def resumir_benchmark(df: pd.DataFrame) -> pd.DataFrame:
     brecha promedio, tiempo promedio, tasa de exito e iteracion de convergencia promedio.
     """
     filas = []
-    for (origen, escenario), grupo in df.groupby(["origen", "escenario"]):
+    for (variante, origen, escenario), grupo in df.groupby(["variante", "origen", "escenario"]):
         exitosas = grupo[grupo["tiene_ruta"]]
         filas.append(
             {
+                "variante": variante,
                 "origen": origen,
                 "escenario": escenario,
                 "n_corridas": len(grupo),
@@ -134,6 +132,7 @@ def barrido_sensibilidad(
     nombre_parametro: str,
     valores: list[float],
     n_corridas: int,
+    variante: str = "guiado",
 ) -> pd.DataFrame:
     """Corre ACO variando UN parametro (alfa, beta, rho o n_hormigas) sobre una lista de valores,
     para un (origen, escenario) fijo. Devuelve una fila resumen por valor del parametro.
@@ -146,7 +145,7 @@ def barrido_sensibilidad(
         config_variante[nombre_parametro] = valor
 
         resultado_dijkstra = buscar_ruta(
-            grafo, origen, config_modelo, aristas_bloqueadas=escenario.aristas_bloqueadas
+            grafo_escenario, origen, config_modelo, aristas_bloqueadas=escenario.aristas_bloqueadas
         )
 
         costos = []
@@ -160,6 +159,7 @@ def barrido_sensibilidad(
                 config_variante,
                 aristas_bloqueadas=escenario.aristas_bloqueadas,
                 semilla=semilla,
+                variante=variante,
             )
             tiempos_ms.append(resultado.tiempo_s * 1000)
             if resultado.tiene_ruta:
@@ -174,6 +174,7 @@ def barrido_sensibilidad(
 
         filas.append(
             {
+                "variante": f"ACO {variante}",
                 nombre_parametro: valor,
                 "tasa_exito_pct": exitos / n_corridas * 100,
                 "brecha_pct_media": brecha_media,

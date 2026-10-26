@@ -1,0 +1,19 @@
+variante,escenario,origenes_con_ruta,pct_origenes_salida_A,pct_origenes_salida_B,origenes_PE-1,origenes_PE-2,origenes_PE-3
+Dijkstra,Normal,42,0.0,100.0,0,42,0
+Dijkstra,Gradas Norte bloqueadas,42,100.0,0.0,0,42,0
+Dijkstra,Gradas Sur bloqueadas,42,0.0,100.0,0,42,0
+Dijkstra,Salida A bloqueada,42,0.0,100.0,0,42,0
+Dijkstra,Salida B bloqueada,42,100.0,0.0,0,42,0
+Dijkstra,Congestion en una salida,42,0.0,100.0,0,42,0
+ACO clasico,Normal,42,11.904761904761903,88.09523809523809,5,37,0
+ACO clasico,Gradas Norte bloqueadas,32,76.19047619047619,0.0,5,17,10
+ACO clasico,Gradas Sur bloqueadas,42,0.0,100.0,0,42,0
+ACO clasico,Salida A bloqueada,42,0.0,100.0,5,37,0
+ACO clasico,Salida B bloqueada,37,88.09523809523809,0.0,10,27,0
+ACO clasico,Congestion en una salida,42,11.904761904761903,88.09523809523809,5,37,0
+ACO guiado,Normal,42,0.0,100.0,0,42,0
+ACO guiado,Gradas Norte bloqueadas,42,100.0,0.0,0,42,0
+ACO guiado,Gradas Sur bloqueadas,42,0.0,100.0,0,42,0
+ACO guiado,Salida A bloqueada,42,0.0,100.0,0,42,0
+ACO guiado,Salida B bloqueada,42,100.0,0.0,0,42,0
+ACO guiado,Congestion en una salida,42,0.0,100.0,0,42,0

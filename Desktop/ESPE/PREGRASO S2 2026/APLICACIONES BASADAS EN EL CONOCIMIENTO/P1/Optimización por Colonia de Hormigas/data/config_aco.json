@@ -1,12 +1,12 @@
 {
-  "descripcion": "Parametros del algoritmo ACO (Optimizacion por Colonia de Hormigas), variante MAX-MIN. Afinados en Fase 2B con una malla de 27 combinaciones (beta en {1,2,3}, rho en {0.1,0.3,0.5}, n_hormigas en {20,30,50}) sobre los 10 origenes representativos, 10 corridas cada una (2700 corridas totales). Las 27 combinaciones lograron 100% de exito y 0.00% de brecha frente a Dijkstra una vez aplicadas las correcciones de Fase 2B (poda de callejones, retroceso, heuristica guiada); se eligio la mas rapida como criterio de desempate. Tabla completa en docs/decisiones_fase2.md. Ningun numero del algoritmo debe escribirse en el codigo: src/aco.py y scripts/smoke_test.py deben leerlos siempre de aqui.",
+  "descripcion": "Parametros del algoritmo ACO (Optimizacion por Colonia de Hormigas), variante MAX-MIN. Afinados en Fase 2B con una malla de 27 combinaciones (beta en {1,2,3}, rho en {0.1,0.3,0.5}, n_hormigas en {20,30,50}) sobre los 10 origenes representativos, 10 corridas cada una (2700 corridas totales). Las 27 combinaciones lograron 100% de exito y 0.00% de brecha frente a Dijkstra una vez aplicadas las correcciones de Fase 2B (poda de callejones, retroceso, heuristica guiada); se eligio la mas rapida como criterio de desempate. Malla corrida sobre el modelo anterior del edificio (descartado); no se usa en el informe. Ningun numero del algoritmo debe escribirse en el codigo: src/aco.py y scripts/correr_experimentos.py deben leerlos siempre de aqui.",
   "fecha_actualizacion": "2026-10-25",
   "parametros": {
     "n_hormigas": {
       "value": 20,
       "supuesto": true,
       "confidence": "supuesto",
-      "comentario": "Numero de hormigas por iteracion. Afinado en Fase 2B: con la poda de callejones, el retroceso y la heuristica guiada, las 27 combinaciones de la malla lograron 100% de exito y 0% de brecha; se eligio 20 (el valor mas bajo probado) por ser el mas rapido entre los empates (ver docs/decisiones_fase2.md)."
+      "comentario": "Numero de hormigas por iteracion. Afinado en Fase 2B: con la poda de callejones, el retroceso y la heuristica guiada, las 27 combinaciones de la malla lograron 100% de exito y 0% de brecha; se eligio 20 (el valor mas bajo probado) por ser el mas rapido entre los empates (ver docs/base_informe.md, seccion (e))."
     },
     "n_iteraciones": {
       "value": 100,
@@ -24,13 +24,13 @@
       "value": 1.0,
       "supuesto": true,
       "confidence": "supuesto",
-      "comentario": "Peso de la heuristica (eta^beta, eta=1/(costo+h(j))) en la probabilidad de transicion. Afinado en Fase 2B: beta=1.0 fue parte de la combinacion mas rapida entre las 27 que lograron 100% de exito (ver docs/decisiones_fase2.md). El valor original (3.0) sobre-enfatizaba las aristas locales baratas y era la causa raiz del fallo de ACO antes de las correcciones."
+      "comentario": "Peso de la heuristica (eta^beta, eta=1/(costo+h(j))) en la probabilidad de transicion. Afinado en Fase 2B: beta=1.0 fue parte de la combinacion mas rapida entre las 27 que lograron 100% de exito (ver docs/base_informe.md, seccion (e)). El valor original (3.0) sobre-enfatizaba las aristas locales baratas y era la causa raiz del fallo de ACO antes de las correcciones."
     },
     "rho": {
       "value": 0.5,
       "supuesto": true,
       "confidence": "supuesto",
-      "comentario": "Tasa de evaporacion de feromona por iteracion (tau = (1-rho)*tau). Afinado en Fase 2B: rho=0.5 fue parte de la combinacion mas rapida entre las 27 que lograron 100% de exito (ver docs/decisiones_fase2.md)."
+      "comentario": "Tasa de evaporacion de feromona por iteracion (tau = (1-rho)*tau). Afinado en Fase 2B: rho=0.5 fue parte de la combinacion mas rapida entre las 27 que lograron 100% de exito (ver docs/base_informe.md, seccion (e))."
     },
     "Q": {
       "value": 1.0,
@@ -79,6 +79,98 @@
       "supuesto": true,
       "confidence": "supuesto",
       "comentario": "Parametro pedido en Fase 2B: limite de pasos por hormiga = max_pasos_factor * numero de nodos de la vista podada del grafo, para evitar que el retroceso (backtracking) se alargue indefinidamente. Valor por defecto pedido explicitamente en la tarea (4)."
+    },
+    "clasico": {
+      "value": {
+        "alfa": 1.0,
+        "beta": 2.0,
+        "rho": 0.5,
+        "n_hormigas": 20,
+        "n_iteraciones": 100,
+        "paciencia_estancamiento": 25
+      },
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Parametros base de la variante 'ACO clasico' (sin poda, sin retroceso, sin heuristica guiada; eta = 1/costo de arista), declarados a priori y NO elegidos por resultados. La auditoria (Fase 1-bis) uso beta=0 (sin visibilidad alguna); aqui se usa beta=2.0 porque es el valor estandar de la literatura (Dorigo y Stutzle, 2004). Los demas parametros (tau_inicial, tau_min, tau_max, Q, semilla, intervalo_snapshot_feromona, max_pasos_factor) se toman de los valores generales de este archivo."
+    },
+    "semilla_base_experimentos": {
+      "value": 1000,
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Semilla base de los experimentos oficiales: la semilla de la corrida i es semilla_base + i (i = 0..29), la misma para todas las variantes."
+    },
+    "experimentos": {
+      "value": {
+        "n_corridas_benchmark": 30,
+        "n_corridas_adaptacion": 30,
+        "n_corridas_sensibilidad": 30,
+        "repeticiones_tiempo_dijkstra": 30,
+        "origenes_sensibilidad": [
+          "H-PB-OFICINAS_CC",
+          "G-PB-LAB_BIOTEC",
+          "H101",
+          "G104",
+          "H203",
+          "G202",
+          "H305",
+          "G301",
+          "H402",
+          "G405"
+        ],
+        "valores_sensibilidad": {
+          "alfa": [
+            0,
+            0.5,
+            1,
+            2,
+            3
+          ],
+          "beta": [
+            0,
+            1,
+            2,
+            3,
+            5
+          ],
+          "rho": [
+            0.1,
+            0.3,
+            0.5,
+            0.7,
+            0.9
+          ],
+          "n_hormigas": [
+            5,
+            10,
+            20,
+            30,
+            50
+          ]
+        },
+        "origenes_figuras": [
+          "H-PB-OFICINAS_CC",
+          "H203",
+          "H403"
+        ],
+        "origen_feromonas": "H403",
+        "tope_minutos_plan": 20,
+        "diagnostico_q": {
+          "Q": [
+            1,
+            10,
+            100,
+            1000
+          ],
+          "beta": [
+            0,
+            2
+          ]
+        },
+        "n_corridas_diagnostico_q": 30
+      },
+      "supuesto": true,
+      "confidence": "supuesto",
+      "comentario": "Plan de experimentos oficiales (scripts/correr_experimentos.py). Si el tiempo estimado supera tope_minutos_plan, solo se reducen las corridas de sensibilidad y la reduccion queda registrada en results/metadatos.json. 'diagnostico_q' es un experimento COMPLEMENTARIO (no estaba en el plan original): explica por que alfa y rho no tienen efecto medible (ver resultados)."
     }
   }
 }

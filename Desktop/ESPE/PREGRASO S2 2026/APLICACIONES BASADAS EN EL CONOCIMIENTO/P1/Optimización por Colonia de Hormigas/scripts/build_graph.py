@@ -135,7 +135,7 @@ def arista(
 
 NOTA_INTERIOR = (
     "Dato interior PROVISIONAL (supuesto del equipo, Fase 1-bis). Reemplazar con "
-    "verificacion de campo (ver data/pendientes.md)."
+    "verificacion de campo (ver docs/base_informe.md, seccion (c))."
 )
 SOURCE_PLANO = "data/posiciones_plano.json + data/calibracion_plano.json (Fase 1-bis)"
 SOURCE_CONFIG = "data/config_modelo.json (supuesto del equipo, Fase 1-bis)"
@@ -542,7 +542,7 @@ def construir_grafo() -> tuple[dict[str, Any], list[str]]:
                 "origenes), 2 secciones de gradas compartidas (norte, sur) y 2 salidas. "
                 "Reconstruido sobre data/maps/plano_base_GH_anotado.jpeg calibrada "
                 "(data/calibracion_plano.json, data/posiciones_plano.json). "
-                "Ver data/pendientes.md para lo que falta verificar en campo."
+                "Ver docs/base_informe.md, seccion (c) para lo que falta verificar en campo."
             ),
             "provisional": True,
         },

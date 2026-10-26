@@ -7,7 +7,7 @@ de inmediato) y marca ese nodo como muerto solo para ella; si no puede
 retroceder mas (vuelve al origen sin opciones) o supera el limite de pasos,
 la hormiga falla y no deposita feromona.
 
-Correcciones aplicadas en la Fase 2B (ver docs/decisiones_fase2.md para el
+Correcciones aplicadas en la Fase 2B (ver docs/base_informe.md, seccion (e) para el
 diagnostico que las motivo):
 1. Poda de callejones (`podar_callejones`): antes de correr ACO se
    construye una VISTA del grafo (no se modifica data/campus_graph.json)
@@ -18,6 +18,14 @@ diagnostico que las motivo):
 3. Heuristica guiada (tipo A*): eta_ij = 1 / (costo_ij + h(j)), con h(j) la
    distancia euclidiana de j al punto de encuentro mas cercano (en x_m,
    y_m), precalculada una sola vez por ejecucion.
+
+Variantes (parametro `variante`):
+- "guiado" (por defecto): todo lo anterior (poda, retroceso, heuristica guiada).
+- "clasico": ACO clasico, la variante (c) de la auditoria: SIN poda de
+  callejones, SIN retroceso (la hormiga que queda atrapada se descarta) y
+  SIN el termino h de la heuristica guiada; la visibilidad es la clasica
+  eta_ij = 1 / costo_ij. Sus parametros base viven en la seccion
+  "clasico" de data/config_aco.json (ver `parametros_clasico`).
 
 Todos los numeros (n_hormigas, n_iteraciones, alfa, beta, rho, Q,
 tau_inicial, tau_min, tau_max, paciencia_estancamiento, semilla,
@@ -39,6 +47,8 @@ from costos import costo_arista
 from grafo import Grafo
 
 INFINITO = float("inf")
+
+VARIANTES = ("guiado", "clasico")
 
 
 @dataclass
@@ -212,8 +222,12 @@ def _construir_camino_hormiga(
     tau: dict[str, float],
     heuristica: dict[str, float],
     rng: random.Random,
+    retroceso: bool = True,
 ) -> tuple[list[str] | None, float, str | None]:
     """Construye el camino de una hormiga desde 'origen' hasta un punto de encuentro, con retroceso.
+
+    Con retroceso=False (ACO clasico) la hormiga que se queda sin vecinos
+    validos se descarta (falla) en vez de retroceder.
 
     Devuelve (camino, costo, punto_encuentro), o (None, inf, None) si la
     hormiga no logra llegar (se quedo sin opciones incluso retrocediendo
@@ -242,6 +256,8 @@ def _construir_camino_hormiga(
         ]
 
         if not candidatos:
+            if not retroceso:
+                return None, INFINITO, None
             if len(pila) == 1:
                 return None, INFINITO, None  # el origen mismo no tiene salida: fallo real
             nodo_muerto = pila.pop()
@@ -286,6 +302,7 @@ def aco_iterativo(
     aristas_bloqueadas: frozenset[str] = frozenset(),
     feromona_inicial: dict[str, float] | None = None,
     semilla: int | None = None,
+    variante: str = "guiado",
 ) -> Iterator[SnapshotIteracionACO]:
     """Generador: corre ACO (MAX-MIN) y entrega un SnapshotIteracionACO al final de cada iteracion.
 
@@ -295,10 +312,17 @@ def aco_iterativo(
     """
     if origen not in grafo.nodos_por_id:
         raise KeyError(f"Nodo origen desconocido: '{origen}'")
+    if variante not in VARIANTES:
+        raise ValueError(f"Variante desconocida: '{variante}' (validas: {VARIANTES})")
 
-    protegidos = {origen} | grafo.ids_puntos_encuentro
+    clasico = variante == "clasico"
+    if clasico:
+        # Sin poda: todos los nodos quedan protegidos; solo se excluyen las aristas bloqueadas.
+        protegidos = set(grafo.nodos_por_id)
+    else:
+        protegidos = {origen} | grafo.ids_puntos_encuentro
     vista, nodos_podados = podar_callejones(grafo, protegidos, aristas_bloqueadas)
-    heuristica = calcular_heuristica(vista)
+    heuristica = {nid: 0.0 for nid in vista.nodos_por_id} if clasico else calcular_heuristica(vista)
 
     semilla_efectiva = config_aco["semilla"] if semilla is None else semilla
     rng = random.Random(semilla_efectiva)
@@ -321,7 +345,9 @@ def aco_iterativo(
 
     for iteracion in range(1, n_iteraciones + 1):
         resultados_hormigas = [
-            _construir_camino_hormiga(vista, origen, config_modelo, config_aco, tau, heuristica, rng)
+            _construir_camino_hormiga(
+                vista, origen, config_modelo, config_aco, tau, heuristica, rng, retroceso=not clasico
+            )
             for _ in range(n_hormigas)
         ]
 
@@ -389,6 +415,7 @@ def ejecutar_aco(
     aristas_bloqueadas: frozenset[str] = frozenset(),
     feromona_inicial: dict[str, float] | None = None,
     semilla: int | None = None,
+    variante: str = "guiado",
 ) -> ResultadoACO:
     """Ejecuta ACO completo (consume aco_iterativo hasta el final) y arma el resultado agregado.
 
@@ -406,7 +433,7 @@ def ejecutar_aco(
     ultimo: SnapshotIteracionACO | None = None
 
     for snap in aco_iterativo(
-        grafo, origen, config_modelo, config_aco, aristas_bloqueadas, feromona_inicial, semilla
+        grafo, origen, config_modelo, config_aco, aristas_bloqueadas, feromona_inicial, semilla, variante
     ):
         historial.append(
             IteracionACO(
@@ -449,3 +476,16 @@ def ejecutar_aco(
         snapshots_feromona=snapshots_feromona,
         nodos_podados=ultimo.nodos_podados,
     )
+
+
+def parametros_clasico(config_aco_completo: dict[str, Any]) -> dict[str, Any]:
+    """Devuelve la configuracion de ACO para la variante "clasico".
+
+    Parte de la configuracion general (tau_*, Q, semilla, intervalo de
+    snapshots, max_pasos_factor) y la sobreescribe con la seccion
+    "clasico" de data/config_aco.json (alfa, beta, rho, n_hormigas,
+    n_iteraciones, paciencia_estancamiento).
+    """
+    cfg = dict(config_aco_completo)
+    cfg.update(config_aco_completo["clasico"])
+    return cfg

@@ -1,6 +1,7 @@
 jsonschema
 pytest
 matplotlib
+numpy
 streamlit
 pandas
 pillow

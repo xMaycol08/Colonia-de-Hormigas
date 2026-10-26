@@ -1,633 +1,305 @@
-"""App interactiva de evacuacion (Fase 3): Streamlit, 4 pestanas.
+"""App de evacuación de los bloques G y H (Streamlit, 4 pestañas).
 
 Ejecutar con:
     streamlit run app/app.py
 
-Esta app SOLO llama a funciones de src/ (dijkstra, aco, agente, metricas,
-benchmark, grafo, costos); no reimplementa ningun algoritmo aqui, solo
-visualizacion y orquestacion de la interfaz.
+Solo llama a funciones de src/; no reimplementa algoritmos.
 """
 
 from __future__ import annotations
 
-import io
 import sys
 import time
-from datetime import datetime
 from pathlib import Path
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import streamlit as st
-from PIL import Image
 
 RAIZ_PROYECTO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ_PROYECTO / "src"))
 
-from grafo import (  # noqa: E402
-    Grafo,
-    cargar_grafo,
-    cargar_configuracion,
-    aplicar_congestion,
-    CONFIG_MODELO_PATH,
-    CONFIG_ACO_PATH,
-)
+from aco import aco_iterativo, parametros_clasico  # noqa: E402
+from agente import AgenteEvacuacion, EstadoPercibido  # noqa: E402
+from benchmark import ejecutar_benchmark, resumir_benchmark  # noqa: E402
 from dijkstra import buscar_ruta  # noqa: E402
-from aco import aco_iterativo, ejecutar_aco  # noqa: E402
-from agente import AgenteEvacuacion, EstadoPercibido, generar_instrucciones  # noqa: E402
-from metricas import tiempo_recorrido_ruta, calcular_metricas_todos_los_origenes  # noqa: E402
-from benchmark import ejecutar_benchmark, resumir_benchmark, barrido_sensibilidad, Escenario, RESULTS_DIR  # noqa: E402
+from escenarios import ESCENARIOS_DISPONIBLES, ETIQUETA_ESCENARIO, ETIQUETA_VARIANTE, construir_escenario  # noqa: E402
+from evacuacion import curva_acumulada, salida_de, simular_evacuacion  # noqa: E402
+from grafo import CONFIG_ACO_PATH, CONFIG_MODELO_PATH, aplicar_congestion, cargar_configuracion, cargar_grafo  # noqa: E402
+from metricas import tiempo_recorrido_ruta  # noqa: E402
+from plano import COLORES_VARIANTE, dibujar_esquema, dibujar_rutas_plano, leyenda_tipos, posiciones_planta  # noqa: E402
 
-ESCENARIOS_DISPONIBLES = [
-    "Normal",
-    "Gradas Norte bloqueadas",
-    "Gradas Sur bloqueadas",
-    "Salida A bloqueada",
-    "Salida B bloqueada",
-    "Congestion en una salida",
-]
-
-COLOR_ACO = "#1565c0"
-COLOR_DIJKSTRA = "#2e7d32"
-COLOR_BLOQUEADA = "#c62828"
-
-
-# --------------------------------------------------------------------------
-# Carga de datos (cacheada)
-# --------------------------------------------------------------------------
+RESULTS_DIR = RAIZ_PROYECTO / "results"
+VARIANTES = {"ACO clásico": ("ACO clasico", "clasico"), "ACO guiado": ("ACO guiado", "guiado")}
 
 
 @st.cache_resource
 def cargar_datos():
     grafo = cargar_grafo()
-    config_modelo = cargar_configuracion(CONFIG_MODELO_PATH)
-    config_aco_default = cargar_configuracion(CONFIG_ACO_PATH)
-    return grafo, config_modelo, config_aco_default
+    cm = cargar_configuracion(CONFIG_MODELO_PATH)
+    ca = cargar_configuracion(CONFIG_ACO_PATH)
+    return grafo, cm, ca
 
 
-ID_ARISTA_GRADAS_SUR_SALIDA_A = "GRADAS-SUR-PB-SALIDA-A"
-ID_ARISTA_GRADAS_NORTE_SALIDA_B = "GRADAS-NORTE-PB-SALIDA-B"
+def config_variante(ca: dict, clave: str) -> dict:
+    return parametros_clasico(ca) if clave == "clasico" else dict(ca)
 
 
-def construir_escenario(nombre: str, grafo: Grafo, config_modelo: dict) -> Escenario:
-    """Traduce el nombre de un escenario de la UI a aristas bloqueadas / congestion."""
-    if nombre == "Gradas Norte bloqueadas":
-        bloqueadas = frozenset(aid for aid in grafo.aristas_por_id if aid.startswith("GRADAS-NORTE-"))
-        return Escenario(nombre, bloqueadas, {})
-    if nombre == "Gradas Sur bloqueadas":
-        bloqueadas = frozenset(aid for aid in grafo.aristas_por_id if aid.startswith("GRADAS-SUR-"))
-        return Escenario(nombre, bloqueadas, {})
-    if nombre == "Salida A bloqueada":
-        return Escenario(nombre, frozenset({ID_ARISTA_GRADAS_SUR_SALIDA_A}), {})
-    if nombre == "Salida B bloqueada":
-        return Escenario(nombre, frozenset({ID_ARISTA_GRADAS_NORTE_SALIDA_B}), {})
-    if nombre == "Congestion en una salida":
-        return Escenario(nombre, frozenset(), {ID_ARISTA_GRADAS_SUR_SALIDA_A: config_modelo["factor_congestion_demo"]})
-    return Escenario("Normal", frozenset(), {})
+def csv_guardado(nombre: str) -> pd.DataFrame | None:
+    ruta = RESULTS_DIR / f"{nombre}.csv"
+    return pd.read_csv(ruta) if ruta.exists() else None
 
 
-# --------------------------------------------------------------------------
-# Dibujo del grafo
-# --------------------------------------------------------------------------
-
-
-def opciones_vista(config_modelo: dict) -> list[str]:
-    niveles = config_modelo["niveles"]
-    opciones = ["General"]
-    for nivel in niveles:
-        opciones.append(f"Nivel {nivel}")
-    return opciones
-
-
-def _nodos_y_aristas_para_vista(grafo: Grafo, vista: str):
-    if vista == "General":
-        nodos = list(grafo.nodos_por_id.values())
-    else:
-        nivel = vista.replace("Nivel ", "")
-        piso = 0 if nivel == "PB" else int(nivel)
-        nodos = [n for n in grafo.nodos_por_id.values() if n["bloque"] in ("H", "G", "compartido") and n["piso"] == piso]
-        if piso == 0:
-            nodos += [n for n in grafo.nodos_por_id.values() if n["tipo"] == "salida"]
-    ids = {n["id"] for n in nodos}
-    aristas = [a for a in grafo.aristas_por_id.values() if a["desde"] in ids and a["hasta"] in ids]
-    return nodos, aristas
-
-
-def _tramos_de_camino(camino: list[str] | None) -> list[tuple[str, str]]:
-    if not camino:
-        return []
-    return list(zip(camino, camino[1:]))
-
-
-def dibujar_grafo(
-    grafo: Grafo,
-    vista: str,
-    tau: dict[str, float] | None = None,
-    camino_aco: list[str] | None = None,
-    camino_dijkstra: list[str] | None = None,
-    aristas_bloqueadas: frozenset[str] = frozenset(),
-    nodos_podados: frozenset[str] = frozenset(),
-) -> plt.Figure:
-    """Dibuja el grafo (o un piso) con feromona como mapa de calor, rutas resaltadas y bloqueos."""
-    nodos, aristas = _nodos_y_aristas_para_vista(grafo, vista)
-
-    fig, ax = plt.subplots(figsize=(8, 6.5))
-
-    tau_vals = [v for k, v in (tau or {}).items()]
-    tau_min_v, tau_max_v = (min(tau_vals), max(tau_vals)) if tau_vals else (0.0, 1.0)
-
-    tramos_aco = set(_tramos_de_camino(camino_aco)) | set((b, a) for a, b in _tramos_de_camino(camino_aco))
-    tramos_dij = set(_tramos_de_camino(camino_dijkstra)) | set((b, a) for a, b in _tramos_de_camino(camino_dijkstra))
-
-    for arista in aristas:
-        n1 = grafo.nodos_por_id[arista["desde"]]
-        n2 = grafo.nodos_por_id[arista["hasta"]]
-        if n1["x_m"] is None or n2["x_m"] is None:
-            continue
-        xs, ys = [n1["x_m"], n2["x_m"]], [n1["y_m"], n2["y_m"]]
-
-        if arista["id"] in aristas_bloqueadas:
-            ax.plot(xs, ys, color=COLOR_BLOQUEADA, linestyle=":", linewidth=2.2, zorder=2)
-            continue
-
-        if tau is not None and arista["id"] in tau:
-            t = tau[arista["id"]]
-            intensidad = (t - tau_min_v) / (tau_max_v - tau_min_v) if tau_max_v > tau_min_v else 0.3
-            color = plt.cm.YlOrRd(0.25 + 0.75 * intensidad)
-            ancho = 0.6 + 3.0 * intensidad
-        else:
-            color, ancho = "#c9c9c9", 0.6
-
-        ax.plot(xs, ys, color=color, linewidth=ancho, zorder=1)
-
-    if camino_dijkstra:
-        for a, b in _tramos_de_camino(camino_dijkstra):
-            n1, n2 = grafo.nodos_por_id.get(a), grafo.nodos_por_id.get(b)
-            if not n1 or not n2 or n1["x_m"] is None or n2["x_m"] is None:
-                continue
-            ax.plot([n1["x_m"], n2["x_m"]], [n1["y_m"], n2["y_m"]], color=COLOR_DIJKSTRA, linestyle="--", linewidth=2.3, zorder=3)
-
-    if camino_aco:
-        for a, b in _tramos_de_camino(camino_aco):
-            n1, n2 = grafo.nodos_por_id.get(a), grafo.nodos_por_id.get(b)
-            if not n1 or not n2 or n1["x_m"] is None or n2["x_m"] is None:
-                continue
-            ax.plot([n1["x_m"], n2["x_m"]], [n1["y_m"], n2["y_m"]], color=COLOR_ACO, linewidth=2.8, zorder=4)
-
-    for n in nodos:
-        if n["x_m"] is None or n["y_m"] is None:
-            continue
-        if n["tipo"] == "punto_encuentro":
-            ax.scatter(n["x_m"], n["y_m"], marker="*", s=260, color="gold", edgecolor="black", zorder=5)
-            ax.annotate(n["nombre"], (n["x_m"], n["y_m"]), fontsize=7, xytext=(4, 4), textcoords="offset points", zorder=6)
-        elif n["id"] in nodos_podados:
-            ax.scatter(n["x_m"], n["y_m"], marker="x", s=15, color="#d0d0d0", zorder=1)
-        elif n["tipo"] == "salida":
-            ax.scatter(n["x_m"], n["y_m"], marker="s", s=80, color="#424242", zorder=5)
-            ax.annotate(n["id"], (n["x_m"], n["y_m"]), fontsize=7, xytext=(4, 4), textcoords="offset points", zorder=6)
-        else:
-            ax.scatter(n["x_m"], n["y_m"], marker="o", s=22, color="#424242", zorder=4)
-
-    ax.set_title(f"Vista: {vista}")
-    ax.set_aspect("equal", adjustable="datalim")
-    ax.grid(True, linewidth=0.3, alpha=0.4)
-    fig.tight_layout()
-    return fig
-
-
-def figura_a_imagen(fig: plt.Figure) -> Image.Image:
-    buffer = io.BytesIO()
-    fig.savefig(buffer, format="png", dpi=100)
-    buffer.seek(0)
-    return Image.open(buffer).convert("RGB")
-
-
-# --------------------------------------------------------------------------
-# App
-# --------------------------------------------------------------------------
+def fmt_tiempo(s: float | None) -> str:
+    if s is None or (isinstance(s, float) and np.isnan(s)):
+        return "-"
+    return f"{int(s // 60)} min {int(s % 60):02d} s"
 
 
 def main() -> None:
-    st.set_page_config(page_title="Evacuacion G/H - ESPE", layout="wide")
-    st.title("Simulador de evacuacion - Bloques G y H (ESPE Matriz)")
+    st.set_page_config(page_title="Evacuación G y H", layout="wide")
+    st.title("Evacuación de los bloques G y H")
 
-    grafo, config_modelo, config_aco_default = cargar_datos()
-    origenes_todos = list(config_modelo["poblacion_por_origen"].keys())
+    grafo, cm, ca = cargar_datos()
+    origenes = list(cm["poblacion_por_origen"])
 
-    # ---------------- Barra lateral ----------------
     with st.sidebar:
-        st.header("Controles")
-        origen = st.selectbox("Origen", origenes_todos, index=0)
-        escenario_nombre = st.selectbox("Escenario", ESCENARIOS_DISPONIBLES, index=0)
-
-        st.markdown("### Parametros de ACO")
-        alfa = st.slider("alfa", 0.1, 5.0, float(config_aco_default["alfa"]), 0.1)
-        beta = st.slider("beta", 0.1, 5.0, float(config_aco_default["beta"]), 0.1)
-        rho = st.slider("rho (evaporacion)", 0.05, 0.9, float(config_aco_default["rho"]), 0.05)
-        n_hormigas = st.slider("n_hormigas", 5, 100, int(config_aco_default["n_hormigas"]), 5)
-        n_iteraciones = st.slider("n_iteraciones", 10, 300, int(config_aco_default["n_iteraciones"]), 10)
-        velocidad = st.slider("Velocidad de animacion (s de pausa por iteracion)", 0.0, 0.5, 0.05, 0.01)
-
+        st.header("Parámetros")
+        origen = st.selectbox("Origen", origenes, index=origenes.index("H403"))
+        escenario_nombre = st.selectbox("Escenario", ESCENARIOS_DISPONIBLES, format_func=lambda n: ETIQUETA_ESCENARIO[n])
+        variante_ui = st.radio("Variante de ACO", list(VARIANTES))
+        nombre_variante, clave_variante = VARIANTES[variante_ui]
+        base = config_variante(ca, clave_variante)
+        alfa = st.slider("α", 0.0, 5.0, float(base["alfa"]), 0.1)
+        beta = st.slider("β", 0.0, 5.0, float(base["beta"]), 0.1)
+        rho = st.slider("ρ", 0.05, 0.9, float(base["rho"]), 0.05)
+        n_hormigas = st.slider("Hormigas", 5, 100, int(base["n_hormigas"]), 5)
+        n_iteraciones = st.slider("Iteraciones", 10, 300, int(base["n_iteraciones"]), 10)
+        pausa = st.slider("Pausa por iteración (s)", 0.0, 0.5, 0.05, 0.01)
         ejecutar = st.button("Ejecutar", type="primary")
 
-    config_aco_actual = dict(config_aco_default)
-    config_aco_actual.update({"alfa": alfa, "beta": beta, "rho": rho, "n_hormigas": n_hormigas, "n_iteraciones": n_iteraciones})
-    st.session_state["config_aco_actual"] = config_aco_actual
-    st.session_state["origen_actual"] = origen
-    st.session_state["escenario_actual"] = escenario_nombre
+    config_aco = dict(base, alfa=alfa, beta=beta, rho=rho, n_hormigas=n_hormigas, n_iteraciones=n_iteraciones)
+    escenario = construir_escenario(escenario_nombre, grafo, cm)
+    grafo_esc = aplicar_congestion(grafo, escenario.congestion)
 
-    escenario = construir_escenario(escenario_nombre, grafo, config_modelo)
-    grafo_escenario = aplicar_congestion(grafo, escenario.congestion)
-
-    tab1, tab2, tab3, tab4 = st.tabs(["Simulacion en vivo", "Comparacion", "Benchmark", "Evacuacion completa"])
-
+    tab1, tab2, tab3, tab4 = st.tabs(["Simulación en vivo", "Comparación", "Benchmark", "Evacuación completa"])
     with tab1:
-        _pestana_simulacion_vivo(grafo_escenario, origen, escenario, config_modelo, config_aco_actual, velocidad, ejecutar)
-
+        pestana_vivo(grafo, grafo_esc, cm, config_aco, clave_variante, origen, escenario, pausa, ejecutar)
     with tab2:
-        _pestana_comparacion(grafo_escenario, origen, escenario, config_modelo, config_aco_actual)
-
+        pestana_comparacion(grafo, grafo_esc, cm, config_aco, clave_variante, nombre_variante, origen, escenario)
     with tab3:
-        _pestana_benchmark(grafo, origenes_todos, config_modelo, config_aco_actual)
-
+        pestana_benchmark(grafo, cm, ca, origenes)
     with tab4:
-        _pestana_evacuacion_completa(grafo_escenario, escenario, config_modelo)
+        pestana_evacuacion(grafo, cm, ca, escenario_nombre)
 
 
-def _pestana_simulacion_vivo(grafo, origen, escenario, config_modelo, config_aco, velocidad, ejecutar) -> None:
-    st.subheader("Simulacion en vivo de ACO")
+# --------------------------------------------------------------------------
+# Pestaña 1
+# --------------------------------------------------------------------------
 
-    vista = st.selectbox("Vista del grafo", opciones_vista(config_modelo), key="vista_tab1")
-    mostrar_dijkstra = st.checkbox("Superponer ruta optima de Dijkstra", value=True)
 
-    placeholder_metricas = st.empty()
-    placeholder_grafo = st.empty()
-    placeholder_convergencia = st.empty()
+def figura_vivo(grafo, cm, snap, origen, ruta_dijkstra, escenario, tau_rango, clave_ruta):
+    pos = posiciones_planta(grafo, cm["altura_piso_m"])
+    fig = plt.figure(figsize=(13, 5.6))
+    ax1 = fig.add_axes((0.02, 0.05, 0.52, 0.88))
+    ax2 = fig.add_axes((0.55, 0.02, 0.44, 0.92))
+    dibujar_rutas_plano(ax1, grafo, pos, {"Dijkstra": ruta_dijkstra, clave_ruta: snap.mejor_camino_global}, origen=origen,
+                        bloqueadas=escenario.aristas_bloqueadas, etiquetas_nodos=False)
+    ax1.set_title("Plano", fontsize=10)
+    dibujar_esquema(ax2, grafo, tau=snap.feromona, tau_rango=tau_rango, camino=snap.mejor_camino_global, bloqueadas=escenario.aristas_bloqueadas,
+                    titulo="Feromona por nivel")
+    return fig
 
+
+def pestana_vivo(grafo, grafo_esc, cm, config_aco, clave_variante, origen, escenario, pausa, ejecutar) -> None:
+    metricas = st.empty()
+    lienzo = st.empty()
+    curva = st.empty()
     if ejecutar:
-        resultado_dijkstra = buscar_ruta(grafo, origen, config_modelo, escenario.aristas_bloqueadas)
+        ref = buscar_ruta(grafo_esc, origen, cm, escenario.aristas_bloqueadas)
         historial = []
-        frames = []
-
-        for snap in aco_iterativo(grafo, origen, config_modelo, config_aco, escenario.aristas_bloqueadas):
+        for snap in aco_iterativo(grafo_esc, origen, cm, config_aco, escenario.aristas_bloqueadas, variante=clave_variante):
             historial.append(snap)
-
-            with placeholder_metricas.container():
-                c1, c2, c3, c4, c5 = st.columns(5)
-                c1.metric("Iteracion", snap.iteracion)
-                costo_txt = f"{snap.mejor_costo_global:.1f}" if snap.mejor_costo_global < float("inf") else "sin ruta"
-                c2.metric("Mejor costo ACO", costo_txt)
-                c3.metric("Optimo Dijkstra", f"{resultado_dijkstra.costo:.1f}" if resultado_dijkstra.tiene_ruta else "sin ruta")
-                if resultado_dijkstra.tiene_ruta and snap.mejor_costo_global < float("inf"):
-                    brecha = (snap.mejor_costo_global - resultado_dijkstra.costo) / resultado_dijkstra.costo * 100
-                    c4.metric("Brecha %", f"{brecha:+.1f}%")
-                else:
-                    c4.metric("Brecha %", "n/a")
-                c5.metric("Hormigas exitosas", f"{snap.hormigas_exitosas}")
-
-            fig = dibujar_grafo(
-                grafo, vista, tau=snap.feromona, camino_aco=snap.mejor_camino_global,
-                camino_dijkstra=resultado_dijkstra.camino if mostrar_dijkstra else None,
-                aristas_bloqueadas=escenario.aristas_bloqueadas, nodos_podados=snap.nodos_podados,
-            )
-            placeholder_grafo.pyplot(fig)
-            frames.append(figura_a_imagen(fig))
+            with metricas.container():
+                c = st.columns(5)
+                c[0].metric("Iteración", snap.iteracion)
+                c[1].metric("Mejor costo ACO", f"{snap.mejor_costo_global:.1f}" if snap.mejor_camino_global else "-")
+                c[2].metric("Óptimo Dijkstra", f"{ref.costo:.1f}" if ref.tiene_ruta else "-")
+                brecha = (snap.mejor_costo_global - ref.costo) / ref.costo * 100 if snap.mejor_camino_global and ref.tiene_ruta else None
+                c[3].metric("Brecha", f"{brecha:.2f} %" if brecha is not None else "-")
+                c[4].metric("Hormigas con ruta", snap.hormigas_exitosas)
+            tau_vals = list(snap.feromona.values())
+            fig = figura_vivo(grafo, cm, snap, origen, ref.camino, escenario, (config_aco["tau_min"], max(max(tau_vals), config_aco["tau_min"] * 2)), VARIANTES_RUTA[clave_variante])
+            lienzo.pyplot(fig)
             plt.close(fig)
-
-            df_conv = pd.DataFrame(
-                [
-                    {
-                        "iteracion": h.iteracion,
-                        "mejor_costo": h.mejor_costo_global if h.mejor_costo_global < float("inf") else None,
-                        "costo_promedio": h.costo_promedio,
-                    }
-                    for h in historial
-                ]
-            ).set_index("iteracion")
-            placeholder_convergencia.line_chart(df_conv)
-
-            if velocidad > 0:
-                time.sleep(velocidad)
-
-        st.session_state["tab1_historial"] = historial
-        st.session_state["tab1_dijkstra"] = resultado_dijkstra
-        st.session_state["tab1_frames"] = frames
-        st.session_state["tab1_grafo_escenario"] = grafo
-        st.session_state["tab1_escenario"] = escenario
-        st.session_state["tab1_vista"] = vista
-
-    elif "tab1_historial" in st.session_state:
-        historial = st.session_state["tab1_historial"]
-        resultado_dijkstra = st.session_state["tab1_dijkstra"]
-        ultimo = historial[-1]
-
-        with placeholder_metricas.container():
-            c1, c2, c3, c4, c5 = st.columns(5)
-            c1.metric("Iteracion", ultimo.iteracion)
-            c2.metric("Mejor costo ACO", f"{ultimo.mejor_costo_global:.1f}" if ultimo.mejor_costo_global < float("inf") else "sin ruta")
-            c3.metric("Optimo Dijkstra", f"{resultado_dijkstra.costo:.1f}" if resultado_dijkstra.tiene_ruta else "sin ruta")
-            if resultado_dijkstra.tiene_ruta and ultimo.mejor_costo_global < float("inf"):
-                brecha = (ultimo.mejor_costo_global - resultado_dijkstra.costo) / resultado_dijkstra.costo * 100
-                c4.metric("Brecha %", f"{brecha:+.1f}%")
-            else:
-                c4.metric("Brecha %", "n/a")
-            c5.metric("Hormigas exitosas", f"{ultimo.hormigas_exitosas}")
-
-        fig = dibujar_grafo(
-            grafo, vista, tau=ultimo.feromona, camino_aco=ultimo.mejor_camino_global,
-            camino_dijkstra=resultado_dijkstra.camino if mostrar_dijkstra else None,
-            aristas_bloqueadas=escenario.aristas_bloqueadas, nodos_podados=ultimo.nodos_podados,
-        )
-        placeholder_grafo.pyplot(fig)
-        plt.close(fig)
-
-        df_conv = pd.DataFrame(
-            [{"iteracion": h.iteracion, "mejor_costo": h.mejor_costo_global if h.mejor_costo_global < float("inf") else None, "costo_promedio": h.costo_promedio} for h in historial]
-        ).set_index("iteracion")
-        placeholder_convergencia.line_chart(df_conv)
-    else:
-        st.info("Ajusta los parametros en la barra lateral y presiona 'Ejecutar'.")
-
-    st.markdown("### Exportar")
-    col_gif, col_png = st.columns(2)
-    with col_gif:
-        if st.button("Exportar GIF de esta corrida"):
-            frames = st.session_state.get("tab1_frames")
-            if not frames:
-                st.warning("Ejecuta una corrida primero.")
-            else:
-                RESULTS_DIR.mkdir(exist_ok=True)
-                ruta_gif = RESULTS_DIR / f"aco_{datetime.now().strftime('%Y%m%d_%H%M%S')}.gif"
-                frames[0].save(ruta_gif, save_all=True, append_images=frames[1:], duration=150, loop=0)
-                st.success(f"GIF guardado en {ruta_gif}")
-    with col_png:
-        if st.session_state.get("tab1_historial") and st.button("Guardar captura PNG actual"):
-            ultimo = st.session_state["tab1_historial"][-1]
-            fig = dibujar_grafo(
-                grafo, vista, tau=ultimo.feromona, camino_aco=ultimo.mejor_camino_global,
-                nodos_podados=ultimo.nodos_podados, aristas_bloqueadas=escenario.aristas_bloqueadas,
-            )
-            RESULTS_DIR.mkdir(exist_ok=True)
-            ruta_png = RESULTS_DIR / f"captura_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
-            fig.savefig(ruta_png, dpi=150)
-            plt.close(fig)
-            st.success(f"Captura guardada en {ruta_png}")
+            curva.line_chart(pd.DataFrame({"mejor costo": [h.mejor_costo_global if h.mejor_camino_global else None for h in historial]}, index=[h.iteracion for h in historial]))
+            if pausa > 0:
+                time.sleep(pausa)
 
 
-def _pestana_comparacion(grafo, origen, escenario, config_modelo, config_aco) -> None:
-    st.subheader(f"Comparacion Dijkstra vs ACO - origen: {origen}, escenario: {escenario.nombre}")
+# --------------------------------------------------------------------------
+# Pestaña 2
+# --------------------------------------------------------------------------
+
+
+def pestana_comparacion(grafo, grafo_esc, cm, config_aco, clave_variante, nombre_variante, origen, escenario) -> None:
+    agente = AgenteEvacuacion(grafo, cm, config_aco, origen)
+    agente.percibir(EstadoPercibido(aristas_bloqueadas=escenario.aristas_bloqueadas, congestion=escenario.congestion))
+    decision = agente.decidir(comparar_con_dijkstra=True, usar_warm_start=False, semilla=int(config_aco["semilla"]), variante=clave_variante)
+    aco, dij = decision.resultado_aco, decision.resultado_dijkstra
 
     t0 = time.perf_counter()
-    resultado_dijkstra = buscar_ruta(grafo, origen, config_modelo, escenario.aristas_bloqueadas)
-    tiempo_dijkstra_ms = (time.perf_counter() - t0) * 1000
+    for _ in range(20):
+        buscar_ruta(grafo_esc, origen, cm, escenario.aristas_bloqueadas)
+    t_dij = (time.perf_counter() - t0) / 20 * 1000
 
-    resultado_aco = ejecutar_aco(grafo, origen, config_modelo, config_aco, escenario.aristas_bloqueadas)
+    def fila(nombre, costo, camino, t_ms, iteracion):
+        if not camino:
+            return {"Algoritmo": nombre, "Costo": "sin ruta", "Tiempo de cómputo (ms)": f"{t_ms:.2f}", "Iteración": "-", "Salida": "-", "Punto de encuentro": "-", "Recorrido": "-"}
+        return {"Algoritmo": nombre, "Costo": f"{costo:.2f}", "Tiempo de cómputo (ms)": f"{t_ms:.2f}", "Iteración": iteracion,
+                "Salida": salida_de(grafo, camino), "Punto de encuentro": camino[-1], "Recorrido": fmt_tiempo(tiempo_recorrido_ruta(grafo_esc, camino, cm))}
 
-    def _fila(nombre, resultado, tiempo_ms, nodos_o_iter):
-        if not resultado.tiene_ruta:
-            return {
-                "Algoritmo": nombre, "Costo": "sin ruta", "Tiempo caminata (s)": "-",
-                "Tiempo computo (ms)": f"{tiempo_ms:.2f}", "Nodos expandidos / iteraciones": nodos_o_iter,
-                "Brecha %": "n/a", "Punto de encuentro": "-",
-            }
-        tiempo_caminata = tiempo_recorrido_ruta(grafo, resultado.camino if nombre == "Dijkstra" else resultado.mejor_camino, config_modelo)
-        brecha = "-"
-        if nombre == "ACO" and resultado_dijkstra.tiene_ruta:
-            brecha = f"{(resultado.mejor_costo - resultado_dijkstra.costo) / resultado_dijkstra.costo * 100:+.1f}%"
-        return {
-            "Algoritmo": nombre,
-            "Costo": round(resultado.costo if nombre == "Dijkstra" else resultado.mejor_costo, 2),
-            "Tiempo caminata (s)": round(tiempo_caminata, 1),
-            "Tiempo computo (ms)": round(tiempo_ms, 2),
-            "Nodos expandidos / iteraciones": nodos_o_iter,
-            "Brecha %": brecha,
-            "Punto de encuentro": resultado.punto_encuentro if nombre == "Dijkstra" else resultado.punto_encuentro,
-        }
+    tabla = pd.DataFrame([fila("Dijkstra", dij.costo, dij.camino, t_dij, "-"), fila(ETIQUETA_VARIANTE[nombre_variante], aco.mejor_costo, aco.mejor_camino, aco.tiempo_s * 1000, aco.iteracion_mejor_solucion)])
+    izq, der = st.columns([1.2, 1])
+    with izq:
+        pos = posiciones_planta(grafo, cm["altura_piso_m"])
+        fig, ax = plt.subplots(figsize=(9, 5.4))
+        clave_ruta = VARIANTES_RUTA[clave_variante]
+        dibujar_rutas_plano(ax, grafo, pos, {"Dijkstra": dij.camino, clave_ruta: aco.mejor_camino}, origen=origen, bloqueadas=escenario.aristas_bloqueadas)
+        leyenda_tipos(ax, tipos=("aula", "pasillo", "gradas", "salida"), loc="upper right")
+        st.pyplot(fig)
+        plt.close(fig)
+    with der:
+        st.dataframe(tabla, hide_index=True, use_container_width=True)
+        if aco.tiene_ruta and dij.tiene_ruta:
+            st.metric("Brecha", f"{(aco.mejor_costo - dij.costo) / dij.costo * 100:.2f} %")
+        st.caption("Ruta " + ETIQUETA_VARIANTE[nombre_variante] + ": " + (" > ".join(aco.mejor_camino) if aco.mejor_camino else "sin ruta"))
+        st.caption("Ruta Dijkstra: " + " > ".join(dij.camino or []))
 
-    tabla = pd.DataFrame(
-        [
-            _fila("Dijkstra", resultado_dijkstra, tiempo_dijkstra_ms, resultado_dijkstra.nodos_expandidos),
-            _fila("ACO", resultado_aco, resultado_aco.tiempo_s * 1000, resultado_aco.iteracion_mejor_solucion),
-        ]
-    )
-    st.dataframe(tabla, hide_index=True, width="stretch")
 
-    st.markdown("### Instrucciones de ruta (agente)")
-    if resultado_aco.tiene_ruta:
-        for paso in generar_instrucciones(grafo, resultado_aco.mejor_camino):
-            st.write(f"- {paso}")
-        tiempo_total = tiempo_recorrido_ruta(grafo, resultado_aco.mejor_camino, config_modelo)
-        st.caption(f"Tiempo estimado de caminata: {tiempo_total:.1f} s (sin incluir tiempo de reaccion)")
+VARIANTES_RUTA = {"clasico": "ACO clasico", "guiado": "ACO guiado"}
+
+
+# --------------------------------------------------------------------------
+# Pestaña 3
+# --------------------------------------------------------------------------
+
+TABLAS_GUARDADAS = {
+    "Resumen del benchmark": "resumen_benchmark",
+    "Resumen por origen": "resumen_benchmark_por_origen",
+    "Referencia Dijkstra": "resumen_dijkstra",
+    "Adaptación (frío y warm start)": "resumen_adaptacion",
+    "Adaptación: reducción": "resumen_adaptacion_reduccion",
+    "Sensibilidad": "resumen_sensibilidad",
+    "Evacuación completa": "evacuacion_completa",
+    "Reparto por salida y punto de encuentro": "reparto_salidas_pe",
+}
+
+
+def pestana_benchmark(grafo, cm, ca, origenes) -> None:
+    st.subheader("Resultados guardados")
+    tabla = st.selectbox("Tabla", list(TABLAS_GUARDADAS))
+    df = csv_guardado(TABLAS_GUARDADAS[tabla])
+    if df is None:
+        st.write("Sin resultados guardados.")
     else:
-        st.warning("ACO no encontro ruta en esta corrida.")
+        st.dataframe(df, hide_index=True, use_container_width=True)
+
+    figuras = sorted((RESULTS_DIR / "figuras").glob("*.png")) if (RESULTS_DIR / "figuras").exists() else []
+    if figuras:
+        nombre = st.selectbox("Figura", [f.name for f in figuras])
+        st.image(str(RESULTS_DIR / "figuras" / nombre), use_container_width=True)
+    gifs = sorted((RESULTS_DIR / "animaciones").glob("*.gif")) if (RESULTS_DIR / "animaciones").exists() else []
+    if gifs:
+        nombre_gif = st.selectbox("Animación", [g.name for g in gifs])
+        st.image(str(RESULTS_DIR / "animaciones" / nombre_gif))
+
+    st.subheader("Re-ejecutar")
+    c1, c2, c3, c4 = st.columns(4)
+    escenarios_sel = c1.multiselect("Escenarios", ESCENARIOS_DISPONIBLES, default=["Normal"], format_func=lambda n: ETIQUETA_ESCENARIO[n])
+    origenes_sel = c2.multiselect("Orígenes", origenes, default=["H-PB-OFICINAS_CC", "H203", "H403"])
+    variantes_sel = c3.multiselect("Variantes", list(VARIANTES), default=list(VARIANTES))
+    n_corridas = c4.slider("Corridas", 1, 30, 5)
+    if st.button("Re-ejecutar benchmark") and escenarios_sel and origenes_sel and variantes_sel:
+        escenarios = [construir_escenario(n, grafo, cm) for n in escenarios_sel]
+        partes = []
+        with st.spinner("Ejecutando"):
+            for nombre_ui in variantes_sel:
+                nombre_variante, clave = VARIANTES[nombre_ui]
+                df_v, _ = ejecutar_benchmark(grafo, origenes_sel, escenarios, cm, config_variante(ca, clave), n_corridas,
+                                             guardar_csv=False, variante=clave, semilla_base=int(ca["semilla_base_experimentos"]))
+                partes.append(df_v)
+        df_nuevo = pd.concat(partes, ignore_index=True)
+        st.dataframe(resumir_benchmark(df_nuevo), hide_index=True, use_container_width=True)
+        fig, ax = plt.subplots(figsize=(9, 3.6))
+        for i, (v, g) in enumerate(df_nuevo[df_nuevo["tiene_ruta"]].groupby("variante")):
+            ax.boxplot(g["brecha_pct"], positions=[i], widths=0.5, patch_artist=True, boxprops=dict(facecolor=COLORES_VARIANTE[v], alpha=0.6))
+        ax.set_xticks(range(df_nuevo["variante"].nunique()))
+        ax.set_xticklabels(sorted(df_nuevo["variante"].unique()))
+        ax.set_ylabel("Brecha (%)")
+        st.pyplot(fig)
+        plt.close(fig)
 
 
-def _pestana_benchmark(grafo, origenes_repr, config_modelo, config_aco_actual) -> None:
-    st.subheader("Benchmark: Dijkstra vs ACO")
+# --------------------------------------------------------------------------
+# Pestaña 4
+# --------------------------------------------------------------------------
 
-    origenes_sel = st.multiselect("Origenes", origenes_repr, default=origenes_repr[:2])
-    escenarios_sel = st.multiselect("Escenarios", ESCENARIOS_DISPONIBLES, default=["Normal"])
-    n_corridas = st.number_input("N corridas de ACO por combinacion", min_value=1, max_value=200, value=30)
 
-    if st.button("Ejecutar benchmark"):
-        if not origenes_sel or not escenarios_sel:
-            st.warning("Selecciona al menos un origen y un escenario.")
+@st.cache_data(show_spinner=False)
+def rutas_evacuacion(escenario_nombre: str, algoritmo: str, semilla_base: int) -> dict[str, list[str] | None]:
+    grafo, cm, ca = cargar_datos()
+    esc = construir_escenario(escenario_nombre, grafo, cm)
+    g = aplicar_congestion(grafo, esc.congestion)
+    rutas = {}
+    for origen in cm["poblacion_por_origen"]:
+        if algoritmo == "Dijkstra":
+            rutas[origen] = buscar_ruta(g, origen, cm, esc.aristas_bloqueadas).camino
         else:
-            escenarios_obj = [construir_escenario(n, grafo, config_modelo) for n in escenarios_sel]
-            with st.spinner("Corriendo benchmark..."):
-                df, ruta_csv = ejecutar_benchmark(grafo, origenes_sel, escenarios_obj, config_modelo, config_aco_actual, n_corridas)
-            st.session_state["benchmark_df"] = df
-            st.session_state["benchmark_csv"] = ruta_csv
-            st.success(f"Benchmark completo ({len(df)} corridas). Guardado en {ruta_csv}")
+            clave = VARIANTES[algoritmo][1]
+            from aco import ejecutar_aco  # noqa: PLC0415
 
-    if "benchmark_df" in st.session_state:
-        df = st.session_state["benchmark_df"]
-        resumen = resumir_benchmark(df)
-        st.markdown("#### Resumen por origen/escenario")
-        st.dataframe(resumen, hide_index=True, width="stretch")
+            for i in range(30):
+                r = ejecutar_aco(g, origen, cm, config_variante(ca, clave), esc.aristas_bloqueadas, semilla=semilla_base + i, variante=clave)
+                if r.tiene_ruta:
+                    rutas[origen] = r.mejor_camino
+                    break
+            else:
+                rutas[origen] = None
+    return rutas
 
-        csv_bytes = df.to_csv(index=False).encode("utf-8")
-        st.download_button("Descargar CSV de corridas individuales", csv_bytes, file_name="benchmark.csv", mime="text/csv")
 
-        st.markdown("#### Distribucion de costos (ACO, corridas exitosas)")
+def pestana_evacuacion(grafo, cm, ca, escenario_nombre) -> None:
+    algoritmo = st.radio("Algoritmo", ["Dijkstra", *VARIANTES], horizontal=True)
+    g = aplicar_congestion(grafo, construir_escenario(escenario_nombre, grafo, cm).congestion)
+    r = simular_evacuacion(g, rutas_evacuacion(escenario_nombre, algoritmo, int(ca["semilla_base_experimentos"])), cm)
+
+    c = st.columns(4)
+    c[0].metric("Primera persona", fmt_tiempo(r["primera_s"]))
+    c[1].metric("Última persona", fmt_tiempo(r["ultima_s"]))
+    c[2].metric("Personas con ruta", f"{len(r['llegadas'])} de {r['poblacion_total']}")
+    c[3].metric("Sin ruta", r["sin_ruta"])
+
+    izq, der = st.columns([1.5, 1])
+    with izq:
+        curva = curva_acumulada(r["llegadas"])
         fig, ax = plt.subplots(figsize=(8, 4))
-        grupos = df[df["tiene_ruta"]].groupby(["origen", "escenario"])
-        etiquetas = []
-        datos = []
-        for (origen, escenario), grupo in grupos:
-            etiquetas.append(f"{origen}\n{escenario}")
-            datos.append(grupo["costo"].dropna().tolist())
-        if datos:
-            ax.boxplot(datos, tick_labels=etiquetas)
-            ax.set_ylabel("Costo")
-            plt.xticks(rotation=45, ha="right", fontsize=7)
-            fig.tight_layout()
-            st.pyplot(fig)
+        if curva:
+            t, n = zip(*curva)
+            ax.plot(t, n, color="#1f5fbf", lw=2)
+            ax.axvline(r["primera_s"], color="#2e7d32", ls="--", lw=1)
+            ax.axvline(r["ultima_s"], color="#b71c1c", ls="--", lw=1)
+        ax.set_xlabel("Tiempo (s)")
+        ax.set_ylabel("Personas en el punto de encuentro")
+        st.pyplot(fig)
         plt.close(fig)
-
-        st.markdown("#### Tiempo de computo: Dijkstra vs ACO (promedio por origen/escenario)")
-        fig2, ax2 = plt.subplots(figsize=(8, 4))
-        resumen_tiempos = resumen.set_index(["origen", "escenario"])["tiempo_ms_medio"]
-        resumen_tiempos.plot(kind="bar", ax=ax2, color=COLOR_ACO)
-        ax2.set_ylabel("Tiempo ACO promedio (ms)")
-        plt.xticks(rotation=45, ha="right", fontsize=7)
-        fig2.tight_layout()
-        st.pyplot(fig2)
-        plt.close(fig2)
-
-    st.markdown("### Barrido de sensibilidad (opcional)")
-    parametro = st.selectbox("Parametro a variar", ["alfa", "beta", "rho", "n_hormigas"])
-    valores_texto = st.text_input("Valores (separados por coma)", "1.0, 2.0, 3.0")
-    if st.button("Ejecutar barrido"):
-        try:
-            valores = [float(v.strip()) for v in valores_texto.split(",") if v.strip()]
-        except ValueError:
-            st.error("Los valores deben ser numeros separados por coma.")
-            valores = []
-        if valores and origenes_sel and escenarios_sel:
-            escenario_obj = construir_escenario(escenarios_sel[0], grafo, config_modelo)
-            with st.spinner("Corriendo barrido..."):
-                df_barrido = barrido_sensibilidad(
-                    grafo, origenes_sel[0], escenario_obj, config_modelo, config_aco_actual, parametro, valores, n_corridas=10
-                )
-            st.dataframe(df_barrido, hide_index=True, width="stretch")
-
-            fig3, (axa, axb) = plt.subplots(1, 2, figsize=(10, 4))
-            axa.plot(df_barrido[parametro], df_barrido["brecha_pct_media"], marker="o")
-            axa.set_xlabel(parametro)
-            axa.set_ylabel("Brecha % media")
-            axb.plot(df_barrido[parametro], df_barrido["tiempo_ms_medio"], marker="o", color="orange")
-            axb.set_xlabel(parametro)
-            axb.set_ylabel("Tiempo medio (ms)")
-            fig3.tight_layout()
-            st.pyplot(fig3)
-            plt.close(fig3)
-        elif not origenes_sel or not escenarios_sel:
-            st.warning("Selecciona al menos un origen y un escenario arriba.")
-
-
-def _pestana_evacuacion_completa(grafo, escenario, config_modelo) -> None:
-    st.subheader(f"Evacuacion completa (42 origenes) - escenario: {escenario.nombre}")
-
-    metricas_origenes = calcular_metricas_todos_los_origenes(grafo, config_modelo, escenario.aristas_bloqueadas)
-
-    df = pd.DataFrame(
-        [
-            {
-                "Origen": m.origen,
-                "Poblacion": m.poblacion,
-                "Tiene ruta": m.tiene_ruta,
-                "1a persona (s)": round(m.tiempo_primera_persona_s, 1) if m.tiene_ruta else None,
-                "Ultima persona (s)": round(m.tiempo_ultima_persona_s, 1) if m.tiene_ruta else None,
-                "Punto de encuentro": m.punto_encuentro,
-            }
-            for m in metricas_origenes
-        ]
-    )
-    st.dataframe(df, hide_index=True, width="stretch")
-
-    if any(m.tiene_ruta for m in metricas_origenes):
-        st.metric("Tiempo global hasta la PRIMERA persona (s)", f"{min(m.tiempo_primera_persona_s for m in metricas_origenes if m.tiene_ruta):.1f}")
-        st.metric("Tiempo global hasta la ULTIMA persona (s)", f"{max(m.tiempo_ultima_persona_s for m in metricas_origenes if m.tiene_ruta):.1f}")
-
-    st.markdown("### Uso de salidas (A vs B)")
-    conteo_salida = {"SALIDA-A": 0, "SALIDA-B": 0, "sin ruta": 0}
-    rutas_por_origen = {}
-    for m in metricas_origenes:
-        resultado = buscar_ruta(grafo, m.origen, config_modelo, escenario.aristas_bloqueadas)
-        rutas_por_origen[m.origen] = resultado
-        if not resultado.tiene_ruta:
-            conteo_salida["sin ruta"] += m.poblacion
-        elif "SALIDA-A" in resultado.camino:
-            conteo_salida["SALIDA-A"] += m.poblacion
-        elif "SALIDA-B" in resultado.camino:
-            conteo_salida["SALIDA-B"] += m.poblacion
-
-    fig, ax = plt.subplots(figsize=(5, 3.5))
-    ax.bar(conteo_salida.keys(), conteo_salida.values(), color=["#1565c0", "#ef6c00", "#c62828"])
-    ax.set_ylabel("Personas")
-    fig.tight_layout()
-    st.pyplot(fig)
-    plt.close(fig)
-
-    st.markdown("### Animacion simple (posiciones a lo largo del tiempo)")
-    tiempos_max = [m.tiempo_ultima_persona_s for m in metricas_origenes if m.tiene_ruta]
-    if not tiempos_max:
-        st.info("Ningun origen tiene ruta en este escenario.")
-        return
-    t_max = max(tiempos_max)
-
-    col1, col2 = st.columns([3, 1])
-    with col2:
-        reproducir = st.button("Reproducir")
-    with col1:
-        t_actual = st.slider("Tiempo (s)", 0.0, float(t_max), 0.0, key="t_animacion")
-
-    def _dibujar_posiciones(t: float) -> plt.Figure:
-        fig, ax = plt.subplots(figsize=(8, 6.5))
-        for a in grafo.aristas_por_id.values():
-            n1, n2 = grafo.nodos_por_id[a["desde"]], grafo.nodos_por_id[a["hasta"]]
-            if n1["x_m"] is None or n2["x_m"] is None:
-                continue
-            ax.plot([n1["x_m"], n2["x_m"]], [n1["y_m"], n2["y_m"]], color="#dddddd", linewidth=0.5, zorder=1)
-        for m in metricas_origenes:
-            if not m.tiene_ruta:
-                continue
-            resultado = rutas_por_origen[m.origen]
-            x, y = _posicion_en_tiempo(grafo, resultado.camino, config_modelo, config_modelo["tiempo_reaccion_s"], t)
-            if x is not None:
-                ax.scatter(x, y, s=80, color="#d81b60", zorder=5)
-                ax.annotate(m.origen, (x, y), fontsize=6, xytext=(4, 4), textcoords="offset points")
-        for n in grafo.nodos_por_id.values():
-            if n["tipo"] == "punto_encuentro" and n["x_m"] is not None:
-                ax.scatter(n["x_m"], n["y_m"], marker="*", s=260, color="gold", edgecolor="black", zorder=4)
-        ax.set_title(f"t = {t:.1f} s")
-        ax.set_aspect("equal", adjustable="datalim")
-        fig.tight_layout()
-        return fig
-
-    placeholder_anim = st.empty()
-    if reproducir:
-        n_frames = 60
-        for i in range(n_frames + 1):
-            t = t_max * i / n_frames
-            fig = _dibujar_posiciones(t)
-            placeholder_anim.pyplot(fig)
-            plt.close(fig)
-            time.sleep(max(0.01, t_max / n_frames / 10))
-    else:
-        fig = _dibujar_posiciones(t_actual)
-        placeholder_anim.pyplot(fig)
-        plt.close(fig)
-
-
-def _posicion_en_tiempo(grafo, camino, config_modelo, tiempo_reaccion_s, t):
-    """Interpola la posicion (x_m, y_m) de una persona en el tiempo t, siguiendo 'camino'."""
-    from costos import tiempo_arista
-
-    if t <= tiempo_reaccion_s:
-        n0 = grafo.nodos_por_id[camino[0]]
-        return n0["x_m"], n0["y_m"]
-
-    t_restante = t - tiempo_reaccion_s
-    for a, b in zip(camino, camino[1:]):
-        arista = next(ar for _v, ar in grafo.vecinos(a) if ar["desde"] in (a, b) and ar["hasta"] in (a, b))
-        dt = tiempo_arista(arista, config_modelo)
-        n1, n2 = grafo.nodos_por_id[a], grafo.nodos_por_id[b]
-        if n1["x_m"] is None or n2["x_m"] is None:
-            t_restante -= dt
-            continue
-        if t_restante <= dt:
-            frac = t_restante / dt if dt > 0 else 1.0
-            x = n1["x_m"] + (n2["x_m"] - n1["x_m"]) * frac
-            y = n1["y_m"] + (n2["y_m"] - n1["y_m"]) * frac
-            return x, y
-        t_restante -= dt
-
-    nf = grafo.nodos_por_id[camino[-1]]
-    return nf["x_m"], nf["y_m"]
+    with der:
+        st.dataframe(pd.DataFrame({"Salida": list(r["por_salida"]), "Personas": list(r["por_salida"].values())}), hide_index=True)
+        st.dataframe(pd.DataFrame({"Punto de encuentro": list(r["por_pe"]), "Personas": list(r["por_pe"].values())}), hide_index=True)
 
 
 if __name__ == "__main__":

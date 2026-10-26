@@ -1,6 +1,6 @@
 """Pruebas de las correcciones de Fase 2B: poda de callejones, retroceso y tasa de exito.
 
-Ver docs/decisiones_fase2.md para el diagnostico que motivo estas
+Ver docs/base_informe.md, seccion (e) para el diagnostico que motivo estas
 correcciones (ACO casi nunca encontraba ruta con los parametros originales
 sobre el grafo real).
 """
@@ -97,7 +97,7 @@ def test_retroceso_permite_recuperarse_de_un_callejon_no_prunado():
 def test_tasa_de_exito_sobre_el_grafo_real_cumple_el_criterio_de_aceptacion():
     """Version mas liviana (10 corridas/origen en vez de 30) del criterio de
     aceptacion de la tarea (>= 95% de exito). La verificacion oficial con 30
-    corridas por origen se corrio aparte (ver docs/decisiones_fase2.md).
+    corridas por origen se corrio aparte (ver docs/base_informe.md, seccion (e)).
     """
     grafo = cargar_grafo()
     config_modelo = cargar_configuracion(CONFIG_MODELO_PATH)

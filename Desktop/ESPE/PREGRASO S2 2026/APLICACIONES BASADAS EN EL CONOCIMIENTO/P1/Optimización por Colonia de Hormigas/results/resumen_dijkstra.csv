@@ -1,0 +1,7 @@
+variante,escenario,costo_medio,tiempo_ms_medio
+Dijkstra,Normal,199.31785714285715,0.09308749999566619
+Dijkstra,Gradas Norte bloqueadas,245.9128571428571,0.07949476191102112
+Dijkstra,Gradas Sur bloqueadas,199.31785714285715,0.07551358333471181
+Dijkstra,Salida A bloqueada,199.31785714285715,0.07943488094767981
+Dijkstra,Salida B bloqueada,245.9128571428571,0.07984905952948143
+Dijkstra,Congestion en una salida,199.31785714285715,0.08856916664832344
